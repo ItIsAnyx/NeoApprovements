@@ -1,4 +1,7 @@
 from pydantic_settings import BaseSettings
+from pathlib import Path
+
+ENV_PATH = Path(__file__).resolve().parent.parent / ".env"
 
 class Settings(BaseSettings):
     APP_NAME: str = "NeoApprovements"
@@ -16,9 +19,11 @@ class Settings(BaseSettings):
     DB_USERNAME: str
     DB_PASSWORD: str
     DB_DATABASE: str
+    DB_HOST: str
+    DB_PORT: int = 5432
 
     class Config:
-        env_file = ".env"
+        env_file = ENV_PATH
         case_sensitive = True
          
     @property
