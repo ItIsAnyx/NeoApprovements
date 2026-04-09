@@ -6,8 +6,8 @@ from sqlalchemy import pool
 from alembic import context
 
 # ====================== ИМПОРТЫ ДЛЯ НАШЕГО ПРОЕКТА ======================
-from backend.app.config import settings          # твои настройки (DB_...)
-from backend.app.models import Base              # ←←← ЭТО САМОЕ ГЛАВНОЕ
+from app.config import settings
+from app.models import Base
 
 # ======================================================================
 
