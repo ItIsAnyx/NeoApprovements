@@ -1,6 +1,8 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
-from config import settings
+from sqlalchemy.orm import sessionmaker
+from backend.app.config import settings
+from backend.app.models import Base
+
 
 DATABASE_URL = (
     f"postgresql+psycopg2://{settings.DB_USER}:"
@@ -8,7 +10,28 @@ DATABASE_URL = (
     f"{settings.DB_PORT}/{settings.DB_DATABASE}"
 )
 
-engine = create_engine(DATABASE_URL, echo=True)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+# =============================================
+# ENGINE + SESSION
+# =============================================
+engine = create_engine(
+    DATABASE_URL,
+    echo=True,
+    pool_pre_ping=True,
+    pool_size=10,
+    max_overflow=20
+)
 
-Base = declarative_base()
+SessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine
+)
+
+# =============================================
+# Функция для создания таблиц (если нужно вручную)
+# =============================================
+def init_db() -> None:
+    Base.metadata.create_all(bind=engine)
+
+
+__all__ = ["engine", "SessionLocal", "Base", "init_db"]
