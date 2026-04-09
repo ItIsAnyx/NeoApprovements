@@ -1,15 +1,15 @@
-from fastapi import Depends, HTTPException
-from auth.dependencies import auth_dependency
 from auth.security import get_roles
+from fastapi import Request, HTTPException, status
 
+def require_roles(*allowed_roles):
+    def dependency(request: Request):
+        payload = getattr(request.state, "user", None)
+        if not payload:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
 
-def require_roles(required_roles: list):
-    def checker(user=Depends(auth_dependency)):
-        roles = get_roles(user)
-
-        if any(role in roles for role in required_roles):
-            return user
-
-        raise HTTPException(status_code=403, detail="Forbidden")
-
-    return checker
+        roles = get_roles(payload)
+        if not any(role in roles for role in allowed_roles):
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
+        
+        return payload
+    return dependency

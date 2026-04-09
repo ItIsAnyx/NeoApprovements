@@ -1,16 +1,12 @@
-# routers/user.py
-from fastapi import APIRouter, Request
-from fastapi.responses import Response
-from auth.dependencies import auth_dependency
-from auth.security import get_roles
+from fastapi import APIRouter,  Depends
+from auth.roles import require_roles
 
 router = APIRouter()
 
 @router.get("/user")
-def user(request: Request):
-    result = auth_dependency(request)
+def user(payload=Depends(require_roles("test"))):
+    return payload
 
-    if isinstance(result, Response):
-        return result
-
-    return result
+@router.get("/user1")
+def user1():
+    return "user"
