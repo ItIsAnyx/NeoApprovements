@@ -252,7 +252,7 @@
       </div>
     </div>
 
-    <!-- Main App -->
+ <!-- Main App -->
     <div id="main-app" class="hidden min-h-screen flex flex-col md:flex-row">
       <aside class="bg-white w-full md:w-72 border-r border-slate-200 flex flex-col shadow-sm z-40">
         <div class="p-5 border-b border-slate-100 flex items-center justify-between">
@@ -454,6 +454,8 @@
         });
       }
     }
+
+
 
     function switchLoginView(view) { if (view === 'list') { els.viewManualLogin.classList.add('hidden'); els.viewUserList.classList.remove('hidden'); els.loginError.classList.add('hidden'); els.loginUsernameInput.value = ''; els.loginPasswordInput.value = ''; } else { els.viewUserList.classList.add('hidden'); els.viewManualLogin.classList.remove('hidden'); setTimeout(() => els.loginUsernameInput.focus(), 100); } }
 
@@ -708,7 +710,7 @@
       document.getElementById('modal-request-type').classList.remove('hidden');
     }
 
-    window.toggleConstructorOption = function(option) {
+   window.toggleConstructorOption = function(option) {
       const current = app_state.constructorOptions[option];
       if (current === 'required') {
         app_state.constructorOptions[option] = 'disabled';
@@ -942,6 +944,7 @@
       document.getElementById('modal-manage-project').classList.remove('hidden');
     }
 
+
     function saveProjectEmployees() { const project = projects_data.find(p => p.id === app_state.activeProjectId); if (!project) return; const newEmployeeIds = getCheckedIds('manage-project-employees'); project.employeeIds = newEmployeeIds.filter(id => !project.managerIds.includes(id)); }
     function saveProjectManagers() {
       const project = projects_data.find(p => p.id === app_state.activeProjectId); if (!project) return;
@@ -1091,10 +1094,14 @@
         renderDynamicFields();
         els.createApprovers.innerHTML = '';
       } else if (isSupport) {
+        els.fieldTitleContainer.classList.remove('hidden');
+        els.fieldDescContainer.classList.remove('hidden');
         els.dynamicFields.innerHTML = '';
         els.createApprovers.innerHTML = '';
         els.supportTypeContainer.classList.remove('hidden');
       } else if (isBudget) {
+        els.fieldTitleContainer.classList.remove('hidden');
+        els.fieldDescContainer.classList.remove('hidden');
         renderBudgetFields();
         renderCreateApprovers(true);
       } else {
@@ -1103,7 +1110,7 @@
       }
     }
 
-    function renderProjectSelectorForCustom(required) {
+   function renderProjectSelectorForCustom(required) {
       const container = document.getElementById('custom-project-container');
       container.classList.remove('hidden');
       const userProjects = getUserProjects(app_state.currentUser.id);
@@ -1287,8 +1294,9 @@
         const oldValue = document.getElementById('field-old')?.value;
         const newValue = document.getElementById('field-new')?.value;
         if (!oldValue || !newValue) { showToast('Укажите суммы', true); return; }
-        title = `Изменение бюджета ${selectedProject ? 'проекта ' + selectedProject : ''}`;
-        desc = `Бюджет ${oldValue}₽ -> ${newValue}₽`;
+        title = document.getElementById('create-title').value.trim();
+        if (!title) { showToast('Введите заголовок', true); return; }
+        desc = document.getElementById('create-desc').value.trim() || `Бюджет ${oldValue}₽ -> ${newValue}₽`;
       } else {
         desc = document.getElementById('create-desc').value.trim() || 'Запрос без описания';
       }
@@ -1311,4 +1319,3 @@
   </script>
 </body>
 </html>
-
