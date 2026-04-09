@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEO Approvements | Сервис согласований</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.0/index.css" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    *, *::before, *::after { transition: background-color 0.35s ease, border-color 0.35s ease, color 0.25s ease, box-shadow 0.35s ease; }
+    .fade-in, .fade-out, .toast, .modal-backdrop, .modal-content { transition: opacity 0.2s ease, transform 0.2s ease; }
+    .req-card, .history-card, .user-card { transition: background-color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, transform 0.2s ease; }
+    button { transition: background-color 0.25s ease, border-color 0.25s ease, color 0.2s ease, box-shadow 0.25s ease, transform 0.15s ease; }
+    input, textarea, select { transition: background-color 0.35s ease, border-color 0.35s ease, color 0.25s ease, box-shadow 0.2s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeOut { to { opacity: 0; transform: scale(0.9); height: 0; margin: 0; padding: 0; } }
+
+    body.dark { background-color: #0f172a; color: #e2e8f0; }
+    body.dark .bg-white { background-color: #1e293b; }
+    body.dark .bg-slate-50 { background-color: #0f172a; }
+    body.dark .bg-slate-100 { background-color: #334155; }
+    body.dark .bg-blue-50 { background-color: #1e3a5f; }
+    body.dark .bg-blue-100 { background-color: #1e3a5f; }
+    body.dark .bg-red-50 { background-color: #450a0a; }
+    body.dark .bg-red-100 { background-color: #450a0a; }
+    body.dark .bg-green-600 { background-color: #16a34a; }
+    body.dark .bg-green-700:hover { background-color: #15803d; }
+    body.dark .bg-slate-800 { background-color: #1e293b; }
+    body.dark .bg-indigo-600 { background-color: #4f46e5; }
+    body.dark .bg-indigo-200 { background-color: #312e81; }
+    body.dark .bg-indigo-50 { background-color: #1e1b4b; }
+    body.dark .border-slate-100 { border-color: #334155; }
+    body.dark .border-slate-200 { border-color: #334155; }
+    body.dark .border-slate-300 { border-color: #475569; }
+    body.dark .text-slate-500 { color: #94a3b8; }
+    body.dark .text-slate-400 { color: #64748b; }
+    body.dark .text-slate-600 { color: #94a3b8; }
+    body.dark .text-slate-700 { color: #cbd5e1; }
+    body.dark .text-slate-800 { color: #f1f5f9; }
+    body.dark .text-slate-900 { color: #f8fafc; }
+    body.dark .text-blue-600 { color: #60a5fa; }
+    body.dark .text-blue-700 { color: #60a5fa; }
+    body.dark .text-blue-900 { color: #93c5fd; }
+    body.dark .text-red-600 { color: #f87171; }
+    body.dark .text-red-700 { color: #f87171; }
+    body.dark .text-indigo-600 { color: #818cf8; }
+    body.dark .hover\:text-blue-600:hover { color: #60a5fa; }
+    body.dark .hover\:text-blue-800:hover { color: #93c5fd; }
+    body.dark .hover\:text-red-500:hover { color: #f87171; }
+    body.dark .hover\:text-red-600:hover { color: #f87171; }
+    body.dark .hover\:bg-slate-200:hover { background-color: #334155; }
+    body.dark .hover\:bg-red-50:hover { background-color: #450a0a; }
+    body.dark .hover\:bg-blue-50:hover { background-color: #1e3a5f; }
+    body.dark .hover\:border-red-200:hover { border-color: #7f1d1d; }
+    body.dark .hover\:border-blue-400:hover { border-color: #3b82f6; }
+    body.dark .hover\:border-blue-300:hover { border-color: #60a5fa; }
+    body.dark .hover\:bg-indigo-50:hover { background-color: #1e1b4b; }
+    body.dark .hover\:shadow-md:hover { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3); }
+    body.dark .shadow-xl { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3); }
+    body.dark .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3); }
+    body.dark .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); }
+    body.dark .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2); }
+    body.dark input:not([type="checkbox"]):not([type="radio"]):not([type="date"]), body.dark textarea, body.dark select { background-color: #334155; border-color: #475569; color: #f1f5f9; }
+    body.dark input[type="date"] { background-color: #334155; border-color: #475569; color: #f1f5f9; }
+    body.dark input::placeholder, body.dark textarea::placeholder { color: #64748b; }
+    body.dark input[type="checkbox"], body.dark input[type="radio"] { accent-color: #3b82f6; }
+    body.dark .modal-backdrop { background: rgba(15, 23, 42, 0.8); }
+    body.dark .modal-content { background: #1e293b; }
+    body.dark .history-card { background: #1e293b; border-left-color: #334155; }
+    body.dark .history-card.approved { border-left-color: #16a34a; background: #052e16; }
+    body.dark .history-card.rejected { border-left-color: #dc2626; background: #450a0a; }
+    body.dark .history-card.created { border-left-color: #3b82f6; }
+    body.dark .history-card.resubmitted { border-left-color: #8b5cf6; }
+    body.dark .status-pending { background: #451a03; color: #fbbf24; border-color: #78350f; }
+    body.dark .status-approved { background: #052e16; color: #4ade80; border-color: #166534; }
+    body.dark .status-rejected { background: #450a0a; color: #fca5a5; border-color: #7f1d1d; }
+    body.dark .checkbox-label { background: #1e293b; border-color: #334155; color: #cbd5e1; }
+    body.dark .checkbox-label:hover { background: #334155; border-color: #475569; }
+    body.dark .checkbox-label input:checked + span { color: #60a5fa; }
+    body.dark .checkbox-label:has(input:checked) { background: #1e3a5f; border-color: #2563eb; }
+    body.dark .nav-btn { color: #94a3b8; }
+    body.dark .nav-btn:hover { background: #334155; color: #f1f5f9; }
+    body.dark .nav-btn.active { background: #312e81; color: #a5b4fc; box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2); }
+    body.dark .req-card { background: #1e293b; border-color: #334155; }
+    body.dark .req-card:hover { border-color: #2563eb; box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.3); }
+    body.dark #view-user-list, body.dark #view-manual-login { background: #1e293b; border-color: #334155; }
+    body.dark .toast { background: #334155; }
+    body.dark .toast.bg-red-600 { background: #dc2626; }
+    body.dark .h-2.bg-slate-100 { background-color: #334155; }
+    body.dark .text-indigo-600 { color: #818cf8; }
+    body.dark .bg-indigo-50 { background-color: #1e1b4b; }
+    body.dark .border-indigo-100 { border-color: #312e81; }
+    body.dark .focus\:ring-blue-500:focus { --tw-ring-color: #3b82f6; }
+    body.dark .focus\:border-blue-500:focus { border-color: #3b82f6; }
+    body.dark ::-webkit-scrollbar { width: 8px; }
+    body.dark ::-webkit-scrollbar-track { background: #0f172a; }
+    body.dark ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    body.dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    body.dark #approval-type-section { background: #1e3a5f; border-color: #1e3a5f; }
+    body.dark #approval-type-section button { background: #334155; color: #94a3b8; border-color: #475569; }
+    body.dark #approval-type-section button.bg-blue-600 { background: #2563eb; color: white; }
+    body.dark .border-r { border-right-color: #334155; }
+    body.dark .bg-opacity-50 { background-color: rgba(30, 41, 59, 0.5); }
+    body.dark .bg-blue-600 { background-color: #2563eb; }
+    body.dark .hover\:bg-blue-700:hover { background-color: #1d4ed8; }
+    body.dark .hover\:bg-green-700:hover { background-color: #15803d; }
+    body.dark .hover\:bg-red-700:hover { background-color: #b91c1c; }
+    body.dark .group-hover\:bg-blue-50:hover { background-color: #1e3a5f; }
+    body.dark .hover\:border-red-200:hover { border-color: #991b1b; }
+    body.dark .hover\:border-blue-300:hover { border-color: #60a5fa; }
+    body.dark .user-card { background: #1e293b; border-color: #334155; }
+    body.dark .user-card:hover { border-color: #2563eb; }
+    body.dark .user-role-badge-manager { background: #1e3a5f; color: #93c5fd; border-color: #2563eb; }
+    body.dark .user-role-badge-employee { background: #14532d; color: #86efac; border-color: #22c55e; }
+    body.dark .user-role-badge-pm { background: #312e81; color: #a5b4fc; border-color: #6366f1; }
+    body.dark .project-card { background: #1e293b; border-color: #334155; }
+    body.dark .project-card:hover { border-color: #6366f1; }
+    body.dark .project-member-badge { background: #334155; color: #cbd5e1; border-color: #475569; }
+    body.dark .project-manager-badge { background: #1e3a5f; color: #93c5fd; border-color: #2563eb; }
+    body.dark .request-type-card { background: #1e293b; border-color: #334155; }
+    body.dark .request-type-card:hover { border-color: #818cf8; }
+    body.dark .request-type-badge-required { background: #14532d; color: #86efac; border-color: #22c55e; }
+    body.dark .request-type-badge-optional { background: #312e81; color: #a5b4fc; border-color: #6366f1; }
+    body.dark .request-type-badge-hidden { background: #450a0a; color: #fca5a5; border-color: #7f1d1d; }
+    body.dark .request-type-card .bg-blue-50 { background: #1e3a5f; }
+    body.dark .request-type-card .text-blue-700 { color: #60a5fa; }
+    body.dark .request-type-card .border-blue-100 { border-color: #2563eb; }
+    body.dark .request-type-card .text-blue-600 { color: #60a5fa; }
+    body.dark .request-type-card .bg-blue-100 { background: #1e3a5f; }
+    body.dark .request-type-card .border-blue-200 { border-color: #2563eb; }
+    body.dark .request-type-card .bg-green-50 { background: #052e16; }
+    body.dark .request-type-card .text-green-700 { color: #4ade80; }
+    body.dark .request-type-card .border-green-100 { border-color: #166534; }
+    body.dark .request-type-card .bg-purple-50 { background: #312e81; }
+    body.dark .request-type-card .text-purple-600 { color: #a78bfa; }
+    body.dark .request-type-card .border-purple-100 { border-color: #6d28d9; }
+    body.dark .request-type-card .bg-amber-50 { background: #451a03; }
+    body.dark .request-type-card .text-amber-600 { color: #fbbf24; }
+    body.dark .request-type-card .border-amber-100 { border-color: #78350f; }
+    body.dark .custom-field-row { background: #1e293b; border-color: #334155; }
+    body.dark .custom-field-row:hover { border-color: #475569; background: #334155; }
+    body.dark .admin-sub-btn { background: #1e293b; color: #94a3b8; border-color: #334155; }
+    body.dark .admin-sub-btn:hover { background: #334155; color: #f1f5f9; }
+    body.dark .admin-sub-btn.active { background: #312e81; color: #a5b4fc; border-color: #4338ca; }
+
+    .fade-in { animation: fadeIn 0.3s ease-out; }
+    .fade-out { animation: fadeOut 0.3s ease-out forwards; }
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 50; transition: opacity 0.2s; }
+    .modal-backdrop.hidden { display: none; opacity: 0; }
+    .modal-content { background: white; border-radius: 16px; padding: 24px; width: 100%; max-width: 480px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); transform: scale(0.95); transition: transform 0.2s; max-height: 90vh; overflow-y: auto; }
+    .modal-backdrop:not(.hidden) .modal-content { transform: scale(1); }
+    .modal-content.wide { max-width: 680px; }
+    .toast { position: fixed; bottom: 24px; right: 24px; background: #1e293b; color: white; padding: 12px 20px; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); z-index: 60; transform: translateY(100px); opacity: 0; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; gap: 12px; font-weight: 500; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .badge { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.025em; }
+    .status-pending { background: #fef3c7; color: #d97706; border: 1px solid #fde68a; }
+    .status-approved { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; }
+    .status-rejected { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+    .nav-btn { width: 100%; text-align: left; padding: 12px 16px; border-radius: 10px; font-size: 0.875rem; font-weight: 500; color: #475569; transition: all 0.2s; margin-bottom: 6px; display: flex; align-items: center; gap: 12px; }
+    .nav-btn:hover { background: #f1f5f9; color: #0f172a; }
+    .nav-btn.active { background: #e0e7ff; color: #3730a3; font-weight: 600; box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1); }
+    .req-card { background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+    .req-card:hover { border-color: #93c5fd; box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.05); }
+    .history-card { background: white; border-left: 4px solid #e2e8f0; padding: 16px; margin-bottom: 12px; border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+    .history-card.approved { border-left-color: #16a34a; background: #f0fdf4; }
+    .history-card.rejected { border-left-color: #dc2626; background: #fef2f2; }
+    .history-card.created { border-left-color: #3b82f6; }
+    .history-card.resubmitted { border-left-color: #8b5cf6; }
+    .checkbox-label { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: all 0.15s; }
+    .checkbox-label:hover { background: #f8fafc; border-color: #cbd5e1; }
+    .checkbox-label input:checked + span { color: #2563eb; font-weight: 500; }
+    .checkbox-label:has(input:checked) { background: #eff6ff; border-color: #bfdbfe; }
+    .type-dropdown { position: relative; display: inline-block; }
+    .type-dropdown-menu { position: absolute; top: 100%; right: 0; margin-top: 4px; background: white; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); z-index: 40; min-width: 220px; overflow: hidden; }
+    body.dark .type-dropdown-menu { background: #1e293b; border-color: #334155; }
+    .type-dropdown-menu.hidden { display: none; }
+    .type-option { padding: 10px 14px; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; gap: 8px; transition: background-color 0.15s; }
+    .type-option:hover { background: #f1f5f9; }
+    body.dark .type-option:hover { background: #334155; }
+    .type-option.active { background: #eff6ff; color: #2563eb; font-weight: 600; }
+    body.dark .type-option.active { background: #1e3a5f; color: #60a5fa; }
+    .user-card { background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .user-card:hover { border-color: #93c5fd; box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.05); }
+    .user-role-badge-manager { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; padding: 4px 10px; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; }
+    .user-role-badge-employee { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; padding: 4px 10px; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; }
+    .user-role-badge-pm { background: #eef2ff; color: #4f46e5; border: 1px solid #c7d2fe; padding: 4px 10px; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; }
+    .project-card { background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+    .project-card:hover { border-color: #818cf8; box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.05); }
+    .project-member-badge { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 9999px; font-size: 0.65rem; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; }
+    .project-manager-badge { background: #eef2ff; color: #4f46e5; border: 1px solid #c7d2fe; padding: 3px 8px; border-radius: 9999px; font-size: 0.65rem; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+    .project-badge-create { background: #dbeafe; color: #1d4ed8; border: 1px solid #93c5fd; padding: 4px 10px; border-radius: 9999px; font-size: 0.7rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+    .project-badge-create:hover { background: #bfdbfe; }
+    body.dark .project-badge-create { background: #1e3a8a; color: #93c5fd; border-color: #2563eb; }
+    body.dark .project-badge-create:hover { background: #1e40af; }
+
+    .request-type-card { background: white; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px; margin-bottom: 16px; transition: all 0.2s; }
+    .request-type-card:hover { border-color: #818cf8; box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.05); }
+    .request-type-badge-required { background: #dcfce7; color: #16a34a; border: 1px solid #bbf7d0; padding: 2px 8px; border-radius: 9999px; font-size: 0.65rem; font-weight: 600; }
+    .request-type-badge-optional { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; padding: 2px 8px; border-radius: 9999px; font-size: 0.65rem; font-weight: 500; }
+    .request-type-badge-hidden { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; padding: 2px 8px; border-radius: 9999px; font-size: 0.65rem; font-weight: 500; }
+    .constructor-toggle { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    .toggle-switch { position: relative; width: 40px; height: 22px; background: #e2e8f0; border-radius: 11px; transition: background 0.2s; }
+    .toggle-switch.active { background: #3b82f6; }
+    .toggle-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; background: white; border-radius: 50%; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+    .toggle-switch.active::after { transform: translateX(18px); }
+    body.dark .toggle-switch { background: #475569; }
+    body.dark .toggle-switch.active { background: #3b82f6; }
+    body.dark .toggle-switch::after { background: #cbd5e1; }
+
+    .admin-sub-nav { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+    .admin-sub-btn { padding: 8px 16px; border-radius: 10px; font-size: 0.8rem; font-weight: 500; color: #64748b; background: white; border: 1px solid #e2e8f0; cursor: pointer; transition: all 0.2s; }
+    .admin-sub-btn:hover { background: #f1f5f9; color: #0f172a; }
+    .admin-sub-btn.active { background: #e0e7ff; color: #3730a3; border-color: #c7d2fe; font-weight: 600; }
+
+    .custom-field-row { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 10px; margin-bottom: 8px; background: #f8fafc; transition: all 0.15s; }
+    .custom-field-row:hover { border-color: #cbd5e1; background: #f1f5f9; }
+    .custom-field-row.drag-handle { cursor: grab; }
+    .custom-field-row input[type="text"] { flex: 1; min-width: 0; }
+    .custom-field-row select { width: 120px; flex-shrink: 0; }
+    body.dark .custom-field-row { background: #1e293b; border-color: #334155; }
+    body.dark .custom-field-row:hover { border-color: #475569; background: #334155; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+  <div id="app-root">
+    <!-- Login Screen -->
+    <div id="login-screen" class="fixed inset-0 bg-slate-50 z-50 flex items-center justify-center p-4">
+      <button id="btn-theme-login" class="absolute top-4 right-4 p-2.5 rounded-xl bg-white shadow-lg border border-slate-200 hover:bg-slate-50 transition-colors text-slate-500 hover:text-blue-600" title="Переключить тему">
+        <svg id="theme-icon-login" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+      </button>
+      <div class="w-full max-w-md">
+        <div id="view-user-list" class="bg-white p-8 rounded-2xl shadow-xl border border-slate-100 relative fade-in">
+          <div class="flex justify-center mb-6"><div class="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-200"><svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div></div>
+          <h1 class="text-2xl font-bold mb-2 text-center text-slate-900">NEO Approvements</h1>
+          <p class="text-slate-500 mb-6 text-center">Выберите профиль</p>
+          <div id="user-list" class="space-y-3 mb-6"></div>
+          <div class="text-center border-t border-slate-100 pt-4"><button id="btn-login-other" class="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline flex items-center justify-center gap-2 mx-auto transition-colors"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>Войти в другой аккаунт (Логин/Пароль)</button></div>
+        </div>
+        <div id="view-manual-login" class="bg-white p-8 rounded-2xl shadow-xl border border-slate-100 relative hidden fade-in">
+          <div class="flex justify-center mb-6"><div class="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200"><svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg></div></div>
+          <h1 class="text-2xl font-bold mb-2 text-center text-slate-900">Вход в систему</h1>
+          <p class="text-slate-500 mb-6 text-center">Введите логин и пароль</p>
+          <form id="manual-login-form" class="space-y-4">
+            <div><label class="block text-sm font-medium text-slate-700 mb-1">Логин</label><input type="text" id="input-login-username" class="w-full border border-slate-300 rounded-lg p-3 text-sm" placeholder="pbasmanov" autocomplete="off"></div>
+            <div><label class="block text-sm font-medium text-slate-700 mb-1">Пароль</label><input type="password" id="input-login-password" class="w-full border border-slate-300 rounded-lg p-3 text-sm" placeholder="••••••"></div>
+            <div id="login-error" class="text-sm text-red-600 hidden">Неверный логин или пароль</div>
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow-md transition-all">Войти</button>
+            <div class="text-center mt-4"><button type="button" id="btn-back-to-list" class="text-sm text-slate-500 hover:text-blue-600 underline">Вернуться к выбору профиля</button></div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="main-app" class="hidden min-h-screen flex flex-col md:flex-row">
+      <aside class="bg-white w-full md:w-72 border-r border-slate-200 flex flex-col shadow-sm z-40">
+        <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center shadow-md"><svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg></div>
+            <span class="font-bold text-lg text-slate-900 tracking-tight">NEO</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="btn-theme" class="p-2 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-blue-600 transition-colors" title="Переключить тему"><svg id="theme-icon-sidebar" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg></button>
+            <button id="btn-logout-mobile" class="md:hidden text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg">Выйти</button>
+          </div>
+        </div>
+        <div class="p-5 border-b border-slate-100 hidden md:block">
+          <div class="flex items-center gap-3"><div id="user-avatar" class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm shadow-md">U</div><div class="overflow-hidden"><div id="user-name" class="font-medium text-slate-900 truncate">User</div><div id="user-role" class="text-xs text-slate-500 truncate">Role</div></div></div>
+          <div class="flex items-center justify-between mt-3"><button id="btn-switch-user" class="text-xs text-slate-500 hover:text-blue-600 font-medium flex items-center gap-1 transition-colors"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>Сменить профиль</button></div>
+        </div>
+        <nav class="flex-1 p-4 space-y-1" id="nav-container">
+          <button class="nav-btn" data-view="tasks"><svg class="w-5 h-5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>Мои задачи<span id="task-count" class="ml-auto bg-blue-100 text-blue-700 text-xs font-bold px-2 py-0.5 rounded-full hidden">0</span></button>
+          <button class="nav-btn" data-view="myRequests"><svg class="w-5 h-5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>Мои запросы<span id="my-requests-count" class="ml-auto bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full hidden shadow-sm">0</span></button>
+          <button id="btn-nav-history" class="nav-btn hidden" data-view="history"><svg class="w-5 h-5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>История процессов</button>
+          <button id="btn-nav-projects" class="nav-btn hidden" data-view="projects"><svg class="w-5 h-5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>Проекты</button>
+          <button id="btn-nav-admin" class="nav-btn hidden" data-view="admin"><svg class="w-5 h-5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>Админ-панель</button>
+        </nav>
+        <div class="p-4 border-t border-slate-100 hidden md:block"><p class="text-xs text-center text-slate-400">&copy; 2026 Neo Approvements</p></div>
+      </aside>
+
+      <main class="flex-1 p-4 md:p-8 overflow-y-auto bg-slate-50 relative">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+          <div><h2 id="page-title" class="text-2xl font-bold text-slate-900">Мои задачи</h2><p id="page-desc" class="text-slate-500 mt-1 text-sm">Запросы, ожидающие вашего решения</p></div>
+          <button id="btn-create-request" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2.5 rounded-xl flex items-center gap-2 shadow-lg shadow-blue-200 transition-all transform hover:-translate-y-0.5 active:scale-95"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>Создать запрос</button>
+        </div>
+        <div id="content-body" class="space-y-4 max-w-4xl"></div>
+      </main>
+    </div>
+
+    <!-- Reject Modal -->
+    <div id="modal-reject" class="modal-backdrop hidden"><div class="modal-content"><h3 class="text-xl font-bold text-slate-900 mb-2">Отклонение запроса</h3><p class="text-sm text-slate-500 mb-6">Укажите причину отказа. Она будет видна инициатору.</p><textarea id="input-reject-reason" class="w-full border border-slate-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none transition-shadow bg-slate-50" rows="4" placeholder="Например: Бюджет превышен, даты заняты..."></textarea><div class="flex justify-end gap-3 mt-6"><button id="btn-cancel-reject" class="px-4 py-2.5 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">Отмена</button><button id="btn-confirm-reject" class="px-4 py-2.5 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors shadow-md">Отклонить</button></div></div></div>
+
+    <!-- Resubmit Modal -->
+    <div id="modal-resubmit" class="modal-backdrop hidden"><div class="modal-content"><h3 class="text-xl font-bold text-slate-900 mb-2">Редактирование</h3><p class="text-sm text-slate-500 mb-4">Измените параметры и отправьте запрос заново.</p><div id="resubmit-form-container" class="space-y-4 max-h-[60vh] overflow-y-auto pr-1"></div><div class="flex justify-end gap-3 mt-6"><button id="btn-cancel-resubmit" class="px-4 py-2.5 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">Отмена</button><button id="btn-confirm-resubmit" class="px-4 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-md">Отправить</button></div></div></div>
+
+    <!-- Create Request Modal -->
+    <div id="modal-create" class="modal-backdrop hidden"><div class="modal-content"><h3 class="text-xl font-bold text-slate-900 mb-4">Новый запрос</h3><div class="space-y-4"><div><label class="block text-sm font-medium text-slate-700 mb-1">Тип запроса</label><div id="create-type-container" class="relative"><select id="create-type" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm bg-white appearance-none pr-8"></select><svg class="w-4 h-4 text-slate-400 absolute right-2.5 top-3 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></div></div><div id="field-title-container"><label class="block text-sm font-medium text-slate-700 mb-1">Заголовок</label><input type="text" id="create-title" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" placeholder="Краткая суть"></div><div id="field-desc-container"><label class="block text-sm font-medium text-slate-700 mb-1">Описание</label><textarea id="create-desc" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" rows="2" placeholder="Детали..."></textarea></div><div id="support-type-container" class="hidden"><label class="block text-sm font-medium text-slate-700 mb-1">Тип обращения</label><div class="grid grid-cols-2 gap-3"><label class="checkbox-label cursor-pointer border-2 border-slate-200 rounded-xl p-4 hover:border-blue-300 hover:bg-blue-50 transition-all has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50"><input type="radio" name="support-subtype" value="suggestion" class="w-4 h-4 text-blue-600" checked><div><span class="block text-sm font-medium text-slate-800">Предложение</span><span class="text-xs text-slate-500">Идея или пожелание</span></div></label><label class="checkbox-label cursor-pointer border-2 border-slate-200 rounded-xl p-4 hover:border-blue-300 hover:bg-blue-50 transition-all has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50"><input type="radio" name="support-subtype" value="action" class="w-4 h-4 text-blue-600"><div><span class="block text-sm font-medium text-slate-800">Запрос на действие</span><span class="text-xs text-slate-500">Нужно что-то сделать</span></div></label></div></div><div id="custom-project-container" class="hidden"></div><div id="dynamic-fields"></div><div id="approvers-section"><label class="block text-sm font-medium text-slate-700 mb-2">Согласующие</label><div class="space-y-2 max-h-32 overflow-y-auto border border-slate-200 rounded-lg p-2" id="create-approvers"></div></div><div id="approval-type-section" class="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-100"><span class="text-sm font-medium text-blue-900">Тип согласования</span><div class="flex bg-white rounded-lg border border-blue-200 p-0.5"><button type="button" class="px-3 py-1 text-xs font-bold rounded-md bg-blue-600 text-white transition-all" id="opt-unanimous">Все</button><button type="button" class="px-3 py-1 text-xs font-bold rounded-md text-slate-500 hover:text-blue-600 transition-all" id="opt-any">Любой</button></div></div></div><div class="flex justify-end gap-3 mt-6"><button id="btn-cancel-create" class="px-4 py-2.5 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">Отмена</button><button id="btn-confirm-create" class="px-5 py-2.5 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-md">Создать</button></div></div></div>
+
+    <!-- Create Project Modal -->
+    <div id="modal-create-project" class="modal-backdrop hidden"><div class="modal-content"><h3 class="text-xl font-bold text-slate-900 mb-4">Новый проект</h3><div class="space-y-4"><div><label class="block text-sm font-medium text-slate-700 mb-1">Название проекта</label><input type="text" id="create-project-name" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" placeholder="Например: Проект Альфа"></div><div><label class="block text-sm font-medium text-slate-700 mb-2">Руководители проекта <span class="text-xs text-slate-400 font-normal">(можно нескольких)</span></label><div class="space-y-2 max-h-40 overflow-y-auto border border-slate-200 rounded-lg p-2" id="create-project-managers"></div></div><div><label class="block text-sm font-medium text-slate-700 mb-2">Сотрудники проекта</label><div class="space-y-2 max-h-40 overflow-y-auto border border-slate-200 rounded-lg p-2" id="create-project-employees"></div></div></div><div class="flex justify-end gap-3 mt-6"><button id="btn-cancel-create-project" class="px-4 py-2.5 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">Отмена</button><button id="btn-confirm-create-project" class="px-5 py-2.5 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-md">Создать проект</button></div></div></div>
+
+    <!-- Manage Project Modal -->
+    <div id="modal-manage-project" class="modal-backdrop hidden"><div class="modal-content"><h3 class="text-xl font-bold text-slate-900 mb-4" id="manage-project-title">Управление проектом</h3><div class="space-y-4"><div id="manage-project-managers-section" class="hidden"><label class="block text-sm font-medium text-slate-700 mb-2">Руководители проекта</label><div class="space-y-2 max-h-40 overflow-y-auto border border-slate-200 rounded-lg p-2" id="manage-project-managers"></div></div><div><label class="block text-sm font-medium text-slate-700 mb-2">Сотрудники проекта</label><div class="space-y-2 max-h-40 overflow-y-auto border border-slate-200 rounded-lg p-2" id="manage-project-employees"></div></div></div><div class="flex justify-end gap-3 mt-6"><button id="btn-cancel-manage-project" class="px-4 py-2.5 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">Закрыть</button></div></div></div>
+
+    <!-- Request Type Constructor Modal -->
+    <div id="modal-request-type" class="modal-backdrop hidden"><div class="modal-content wide"><h3 class="text-xl font-bold text-slate-900 mb-1" id="request-type-modal-title">Создать тип запроса</h3><p class="text-sm text-slate-500 mb-5">Настройте поля и параметры для нового типа запроса</p><div class="space-y-5" id="request-type-form">
+      <div><label class="block text-sm font-medium text-slate-700 mb-1">Название типа запроса <span class="text-red-500">*</span></label><input type="text" id="rt-name" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" placeholder="Например: Закупка оборудования"></div>
+      
+      <div class="space-y-3">
+        <label class="block text-sm font-medium text-slate-700">Поля формы</label>
+        
+        <div class="constructor-toggle" onclick="toggleConstructorOption('title')">
+          <div id="toggle-title" class="toggle-switch active"></div>
+          <span class="text-sm text-slate-700">Заголовок запроса</span>
+          <span id="toggle-title-label" class="request-type-badge-required">Обязательное</span>
+        </div>
+
+        <div class="constructor-toggle" onclick="toggleConstructorOption('description')">
+          <div id="toggle-description" class="toggle-switch active"></div>
+          <span class="text-sm text-slate-700">Описание</span>
+          <span id="toggle-description-label" class="request-type-badge-required">Обязательное</span>
+        </div>
+
+        <div class="constructor-toggle" onclick="toggleConstructorOption('project')">
+          <div id="toggle-project" class="toggle-switch"></div>
+          <span class="text-sm text-slate-700">Проект</span>
+          <span id="toggle-project-label" class="request-type-badge-hidden">Отключено</span>
+        </div>
+
+        <div class="constructor-toggle" onclick="toggleConstructorOption('approvers')">
+          <div id="toggle-approvers" class="toggle-switch active"></div>
+          <span class="text-sm text-slate-700">Согласующие</span>
+          <span id="toggle-approvers-label" class="request-type-badge-required">Обязательное</span>
+        </div>
+
+        <div class="constructor-toggle" onclick="toggleConstructorOption('approvalType')">
+          <div id="toggle-approvalType" class="toggle-switch active"></div>
+          <span class="text-sm text-slate-700">Тип согласования (Все/Любой)</span>
+          <span id="toggle-approvalType-label" class="request-type-badge-required">Обязательное</span>
+        </div>
+      </div>
+
+      <div class="pt-4 border-t border-slate-200">
+        <div class="flex items-center justify-between mb-3">
+          <label class="block text-sm font-medium text-slate-700">Дополнительные поля</label>
+          <button onclick="addCustomField()" class="text-xs font-medium text-indigo-600 hover:text-indigo-800 flex items-center gap-1 transition-colors">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            Добавить поле
+          </button>
+        </div>
+        <div id="custom-fields-list" class="space-y-2"></div>
+        <div id="no-custom-fields" class="text-center py-4 border-2 border-dashed border-slate-200 rounded-xl">
+          <svg class="w-8 h-8 text-slate-300 mx-auto mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          <p class="text-xs text-slate-400">Нажмите «Добавить поле» для создания дополнительных столбцов</p>
+        </div>
+      </div>
+    </div><div class="flex justify-end gap-3 mt-6 pt-4 border-t border-slate-100"><button id="btn-cancel-request-type" class="px-4 py-2.5 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">Отмена</button><button id="btn-confirm-request-type" class="px-5 py-2.5 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-md">Сохранить</button></div></div></div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast"><svg class="w-5 h-5 text-green-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg><span id="toast-msg" class="text-sm">Успешно</span></div>
+  </div>
+
+  <script>
+    const app_state = { currentUser: null, currentView: 'tasks', adminSubView: 'requests', activeRequestId: null, activeProjectId: null, activeRequestTypeId: null, approvalType: 'unanimous', lastViewedMyRequests: 0, historySort: { timeDir: 'desc', typeFilter: 'all' }, constructorOptions: { title: 'required', description: 'required', project: 'disabled', approvers: 'required', approvalType: 'required' }, customFieldsList: [] };
+
+    const getTimestamp = () => Date.now();
+    const getDateTimeString = () => { const d = new Date(); return `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}.${d.getFullYear()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; };
+
+    const mock_users = [
+      { id: 'pbasmanov', name: 'Павел Басманов', role: 'Сотрудник', avatar: 'PB', isAdmin: false, roleType: 'user', password: '1234', leaveApprovers: ['adeev'] },
+      { id: 'adeev', name: 'Алексей Деев', role: 'Руководитель', avatar: 'AD', isAdmin: false, roleType: 'manager', password: '1234', leaveApprovers: ['admin'] },
+      { id: 'avasilich', name: 'Андрей Василич', role: 'Менеджер проекта', avatar: 'AV', isAdmin: false, roleType: 'pm', password: '1234', leaveApprovers: ['adeev'] },
+      { id: 'divanovich', name: 'Дмитрий Иванович', role: 'Менеджер проекта', avatar: 'DI', isAdmin: false, roleType: 'pm', password: '1234', leaveApprovers: ['adeev'] },
+      { id: 'ipetrovich', name: 'Иван Петрович', role: 'Менеджер проекта', avatar: 'IP', isAdmin: false, roleType: 'pm', password: '1234', leaveApprovers: ['adeev'] },
+      { id: 'agavrilich', name: 'Андрей Гаврилич', role: 'Менеджер проекта', avatar: 'AG', isAdmin: false, roleType: 'pm', password: '1234', leaveApprovers: ['adeev'] },
+      { id: 'admin', name: 'Системный Администратор', role: 'Admin', avatar: 'SYS', isAdmin: true, roleType: 'admin', password: 'admin', leaveApprovers: [] }
+    ];
+
+    let projects_data = [
+      { id: 'proj_001', name: 'Проект Альфа', managerIds: ['avasilich', 'ipetrovich'], employeeIds: ['pbasmanov', 'adeev'], createdBy: 'admin' },
+      { id: 'proj_002', name: 'Проект Бета', managerIds: ['divanovich'], employeeIds: ['pbasmanov', 'agavrilich'], createdBy: 'admin' },
+      { id: 'proj_003', name: 'Проект Гамма', managerIds: ['ipetrovich', 'avasilich'], employeeIds: ['adeev'], createdBy: 'admin' }
+    ];
+
+    let requests_data = [
+      { id: 'req_001', title: 'Заявление на отпуск', type: 'leave', description: 'Отпуск с 15.11.2026 по 28.11.2026', creator: 'pbasmanov', approvers: ['adeev'], approvalType: 'unanimous', approvals: {}, status: 'pending', history: [{ action: 'created', user: 'pbasmanov', time: '15.10.2026 10:00', note: '', timestamp: Date.now() - 100000 }], details: { startDate: '2026-11-15', endDate: '2026-11-28' }, lastUpdated: Date.now() - 100000 },
+      { id: 'req_002', title: 'Изменение бюджета проекта Альфа', type: 'budget_change', description: 'Бюджет 100₽ -> 50₽', creator: 'avasilich', approvers: ['avasilich', 'divanovich', 'ipetrovich'], approvalType: 'unanimous', approvals: {}, status: 'pending', history: [{ action: 'created', user: 'avasilich', time: '15.10.2026 11:00', note: '', timestamp: Date.now() - 80000 }], details: { oldValue: '100', newValue: '50', project: 'Проект Альфа' }, lastUpdated: Date.now() - 80000 },
+      { id: 'req_003', title: 'Изменение бюджета проекта Бета', type: 'budget_change', description: 'Бюджет 50₽ -> 500₽', creator: 'divanovich', approvers: ['avasilich', 'divanovich'], approvalType: 'any', approvals: {}, status: 'pending', history: [{ action: 'created', user: 'divanovich', time: '15.10.2026 12:00', note: '', timestamp: Date.now() - 60000 }], details: { oldValue: '50', newValue: '500', project: 'Проект Бета' }, lastUpdated: Date.now() - 60000 },
+      { id: 'req_004', title: 'Обращение в тех поддержку (Проект Z)', type: 'support', description: 'Нет доступа к системе', creator: 'admin', approvers: ['admin'], approvalType: 'any', approvals: {}, status: 'pending', history: [{ action: 'created', user: 'admin', time: '15.10.2026 13:00', note: 'Admin test', timestamp: Date.now() - 40000 }], details: { note: 'Срочный доступ к репозиторию', subtype: 'action' }, lastUpdated: Date.now() - 40000 }
+    ];
+
+    let request_types_data = [];
+
+    const els = {
+      loginScreen: document.getElementById('login-screen'), viewUserList: document.getElementById('view-user-list'), viewManualLogin: document.getElementById('view-manual-login'), userList: document.getElementById('user-list'), manualLoginForm: document.getElementById('manual-login-form'), loginUsernameInput: document.getElementById('input-login-username'), loginPasswordInput: document.getElementById('input-login-password'), loginError: document.getElementById('login-error'), btnBackToList: document.getElementById('btn-back-to-list'), mainApp: document.getElementById('main-app'), userAvatar: document.getElementById('user-avatar'), userName: document.getElementById('user-name'), userRole: document.getElementById('user-role'), taskCount: document.getElementById('task-count'), pageTitle: document.getElementById('page-title'), pageDesc: document.getElementById('page-desc'), contentBody: document.getElementById('content-body'), navBtns: document.querySelectorAll('.nav-btn'), logoutMobile: document.getElementById('btn-logout-mobile'), switchUser: document.getElementById('btn-switch-user'), rejectModal: document.getElementById('modal-reject'), rejectInput: document.getElementById('input-reject-reason'), cancelReject: document.getElementById('btn-cancel-reject'), confirmReject: document.getElementById('btn-confirm-reject'), resubmitModal: document.getElementById('modal-resubmit'), resubmitContainer: document.getElementById('resubmit-form-container'), cancelResubmit: document.getElementById('btn-cancel-resubmit'), confirmResubmit: document.getElementById('btn-confirm-resubmit'), createModal: document.getElementById('modal-create'), btnCancelCreate: document.getElementById('btn-cancel-create'), btnConfirmCreate: document.getElementById('btn-confirm-create'), btnCreate: document.getElementById('btn-create-request'), toast: document.getElementById('toast'), toastMsg: document.getElementById('toast-msg'), dynamicFields: document.getElementById('dynamic-fields'), createApprovers: document.getElementById('create-approvers'), btnNavHistory: document.getElementById('btn-nav-history'), btnNavAdmin: document.getElementById('btn-nav-admin'), btnNavProjects: document.getElementById('btn-nav-projects'), btnLoginOther: document.getElementById('btn-login-other'), supportTypeContainer: document.getElementById('support-type-container'), approversSection: document.getElementById('approvers-section'), approvalTypeSection: document.getElementById('approval-type-section'), myRequestsCount: document.getElementById('my-requests-count'), fieldTitleContainer: document.getElementById('field-title-container'), fieldDescContainer: document.getElementById('field-desc-container'), btnThemeLogin: document.getElementById('btn-theme-login'), themeIconLogin: document.getElementById('theme-icon-login'), btnTheme: document.getElementById('btn-theme'), themeIconSidebar: document.getElementById('theme-icon-sidebar')
+    };
+
+    function initTheme() { const saved = localStorage.getItem('neo_theme'); if (saved === 'dark') { document.body.classList.add('dark'); updateThemeIcons(true); } else { updateThemeIcons(false); } }
+    function updateThemeIcons(isDark) { const sun = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />`; const moon = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />`; const html = isDark ? moon : sun; els.themeIconLogin.innerHTML = html; els.themeIconSidebar.innerHTML = html; }
+    function toggleTheme() { const isDark = document.body.classList.toggle('dark'); localStorage.setItem('neo_theme', isDark ? 'dark' : 'light'); updateThemeIcons(isDark); }
+
+    function init() { initTheme(); renderLogin(); setupEventListeners(); }
+
+    function setupEventListeners() {
+      els.btnTheme.addEventListener('click', toggleTheme);
+      els.btnThemeLogin.addEventListener('click', toggleTheme);
+      els.logoutMobile.addEventListener('click', () => logout('manual'));
+      els.switchUser.addEventListener('click', () => logout('manual'));
+      els.btnLoginOther.addEventListener('click', () => switchLoginView('manual'));
+      els.btnBackToList.addEventListener('click', (e) => { e.preventDefault(); switchLoginView('list'); });
+      els.manualLoginForm.addEventListener('submit', (e) => { e.preventDefault(); handleManualLogin(); });
+      els.navBtns.forEach(btn => { if (!btn.id.startsWith('btn-nav-')) btn.addEventListener('click', () => switchView(btn.dataset.view)); });
+      els.btnNavHistory.addEventListener('click', () => switchView('history'));
+      els.btnNavProjects.addEventListener('click', () => switchView('projects'));
+      els.btnNavAdmin.addEventListener('click', () => { app_state.adminSubView = 'requests'; switchView('admin'); });
+      els.cancelReject.addEventListener('click', () => els.rejectModal.classList.add('hidden'));
+      els.confirmReject.addEventListener('click', handleRejectConfirm);
+      els.cancelResubmit.addEventListener('click', () => els.resubmitModal.classList.add('hidden'));
+      els.confirmResubmit.addEventListener('click', handleResubmitConfirm);
+      els.btnCancelCreate.addEventListener('click', () => els.createModal.classList.add('hidden'));
+      els.btnConfirmCreate.addEventListener('click', handleCreateConfirm);
+      document.getElementById('opt-unanimous').addEventListener('click', (e) => { app_state.approvalType = 'unanimous'; e.target.className = "px-3 py-1 text-xs font-bold rounded-md bg-blue-600 text-white transition-all"; document.getElementById('opt-any').className = "px-3 py-1 text-xs font-bold rounded-md text-slate-500 hover:text-blue-600 transition-all"; });
+      document.getElementById('opt-any').addEventListener('click', (e) => { app_state.approvalType = 'any'; e.target.className = "px-3 py-1 text-xs font-bold rounded-md bg-blue-600 text-white transition-all"; document.getElementById('opt-unanimous').className = "px-3 py-1 text-xs font-bold rounded-md text-slate-500 hover:text-blue-600 transition-all"; });
+      document.getElementById('create-type').addEventListener('change', handleTypeChange);
+      els.btnCreate.addEventListener('click', () => { populateCreateTypeDropdown(); els.createModal.classList.remove('hidden'); handleTypeChange(); document.getElementById('create-title').value = ''; document.getElementById('create-desc').value = ''; });
+      document.addEventListener('click', (e) => { const dd = document.getElementById('type-dropdown-container'); if (dd && !dd.contains(e.target)) { const menu = document.getElementById('type-dropdown-menu'); if (menu) menu.classList.add('hidden'); } });
+
+      document.getElementById('btn-cancel-create-project').addEventListener('click', () => document.getElementById('modal-create-project').classList.add('hidden'));
+      document.getElementById('btn-confirm-create-project').addEventListener('click', handleCreateProjectConfirm);
+
+      document.getElementById('btn-cancel-request-type').addEventListener('click', () => document.getElementById('modal-request-type').classList.add('hidden'));
+      document.getElementById('btn-confirm-request-type').addEventListener('click', handleRequestTypeConfirm);
+
+      const manageCancelBtn = document.getElementById('btn-cancel-manage-project');
+      if (manageCancelBtn) {
+        manageCancelBtn.addEventListener('click', function() {
+          if (app_state.currentUser?.isAdmin) { if (!saveProjectManagers()) return; }
+          saveProjectEmployees();
+          document.getElementById('modal-manage-project').classList.add('hidden');
+          renderProjects();
+        });
+      }
+
+      const manageProjectModal = document.getElementById('modal-manage-project');
+      if (manageProjectModal) {
+        manageProjectModal.addEventListener('click', function(e) {
+          if (e.target === this) {
+            if (app_state.currentUser?.isAdmin) { if (!saveProjectManagers()) return; }
+            saveProjectEmployees();
+            this.classList.add('hidden');
+            renderProjects();
+          }
+        });
+      }
+    }
+
+    function switchLoginView(view) { if (view === 'list') { els.viewManualLogin.classList.add('hidden'); els.viewUserList.classList.remove('hidden'); els.loginError.classList.add('hidden'); els.loginUsernameInput.value = ''; els.loginPasswordInput.value = ''; } else { els.viewUserList.classList.add('hidden'); els.viewManualLogin.classList.remove('hidden'); setTimeout(() => els.loginUsernameInput.focus(), 100); } }
+
+    function renderLogin() {
+      els.userList.innerHTML = '';
+      const savedUserIds = getSavedUsers();
+      const availableUsers = mock_users.filter(u => savedUserIds.includes(u.id));
+      if (availableUsers.length === 0) { els.userList.innerHTML = '<p class="text-center text-sm text-slate-500 py-4">Нет сохраненных аккаунтов.</p>'; }
+      availableUsers.forEach((user, index) => {
+        const container = document.createElement('div'); container.className = 'relative group fade-in'; container.style.animationDelay = `${index * 0.05}s`;
+        const removeBtn = document.createElement('button'); removeBtn.className = 'absolute top-2 right-2 p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-full transition-all opacity-0 group-hover:opacity-100 z-10';
+        removeBtn.innerHTML = `<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>`;
+        removeBtn.addEventListener('click', (e) => { e.stopPropagation(); removeUserFromList(user.id, container); });
+        const btn = document.createElement('button'); btn.className = 'w-full flex items-center gap-4 p-4 bg-white border border-slate-200 rounded-xl hover:border-blue-400 hover:shadow-md transition-all group text-left relative z-0';
+        btn.innerHTML = `<div class="w-10 h-10 rounded-full bg-slate-100 group-hover:bg-blue-50 flex items-center justify-center text-slate-600 font-bold text-sm">${user.avatar}</div><div><div class="font-bold text-slate-800">${user.name}</div><div class="text-xs text-slate-500">${user.role}</div></div>`;
+        btn.addEventListener('click', () => login(user));
+        container.appendChild(btn); container.appendChild(removeBtn); els.userList.appendChild(container);
+      });
+    }
+
+    function getSavedUsers() { try { return JSON.parse(localStorage.getItem('neo_saved_users')) || mock_users.map(u => u.id); } catch { return mock_users.map(u => u.id); } }
+    function saveUsers(ids) { localStorage.setItem('neo_saved_users', JSON.stringify(ids)); }
+    function removeUserFromList(userId, container) { container.classList.add('fade-out'); setTimeout(() => { saveUsers(getSavedUsers().filter(id => id !== userId)); renderLogin(); }, 300); }
+    function loadLastViewed(userId) { return parseInt(localStorage.getItem(`neo_last_viewed_${userId}`) || '0', 10); }
+    function saveLastViewed(userId, ts) { localStorage.setItem(`neo_last_viewed_${userId}`, String(ts)); }
+
+    function handleManualLogin() {
+      const username = els.loginUsernameInput.value.trim().toLowerCase(); const password = els.loginPasswordInput.value;
+      els.loginError.classList.add('hidden');
+      const user = mock_users.find(u => u.id.toLowerCase() === username);
+      if (!user) { els.loginError.textContent = "Пользователь не найден"; els.loginError.classList.remove('hidden'); return; }
+      if (user.password !== password) { els.loginError.textContent = "Неверный пароль"; els.loginError.classList.remove('hidden'); return; }
+      if (!getSavedUsers().includes(user.id)) saveUsers([...getSavedUsers(), user.id]);
+      login(user);
+    }
+
+    function login(user) {
+      app_state.currentUser = user; app_state.lastViewedMyRequests = loadLastViewed(user.id);
+      els.loginScreen.classList.add('hidden'); els.mainApp.classList.remove('hidden');
+      els.userAvatar.textContent = user.avatar; els.userName.textContent = user.name; els.userRole.textContent = user.role;
+
+      if (user.isAdmin) {
+        els.btnNavAdmin.classList.remove('hidden');
+        els.btnNavProjects.classList.remove('hidden');
+        els.btnNavHistory.classList.remove('hidden');
+      } else if (user.roleType === 'manager') {
+        els.btnNavAdmin.classList.add('hidden');
+        els.btnNavProjects.classList.remove('hidden');
+        els.btnNavHistory.classList.remove('hidden');
+      } else if (user.roleType === 'pm') {
+        els.btnNavAdmin.classList.add('hidden');
+        els.btnNavProjects.classList.remove('hidden');
+        els.btnNavHistory.classList.remove('hidden');
+      } else {
+        els.btnNavAdmin.classList.add('hidden');
+        els.btnNavProjects.classList.add('hidden');
+        els.btnNavHistory.classList.add('hidden');
+      }
+
+      switchView('tasks'); updateTaskBadge(); updateMyRequestsBadge();
+    }
+
+    function logout(view = 'list') { app_state.currentUser = null; els.mainApp.classList.add('hidden'); els.loginScreen.classList.remove('hidden'); els.btnNavHistory.classList.add('hidden'); els.btnNavAdmin.classList.add('hidden'); els.btnNavProjects.classList.add('hidden'); renderLogin(); switchLoginView(view); }
+
+    function updateTaskBadge() { if (!app_state.currentUser) return; const uid = app_state.currentUser.id; const count = requests_data.filter(r => r.status === 'pending' && r.approvers.includes(uid) && !(r.approvalType === 'any' && Object.values(r.approvals).includes(true)) && !r.approvals[uid]).length; els.taskCount.textContent = count; els.taskCount.classList.toggle('hidden', count === 0); }
+    function updateMyRequestsBadge() { if (!app_state.currentUser || !els.myRequestsCount) return; const count = requests_data.filter(r => r.creator === app_state.currentUser.id && r.status !== 'pending' && r.lastUpdated > app_state.lastViewedMyRequests).length; if (count > 0) { els.myRequestsCount.textContent = count > 9 ? '9+' : count; els.myRequestsCount.classList.remove('hidden'); } else { els.myRequestsCount.classList.add('hidden'); } }
+
+    function switchView(viewName) {
+      app_state.currentView = viewName;
+      els.navBtns.forEach(b => b.classList.remove('active'));
+      const activeBtn = document.querySelector(`.nav-btn[data-view="${viewName}"]`);
+      if (activeBtn) activeBtn.classList.add('active');
+      if (viewName === 'myRequests' && app_state.currentUser) { app_state.lastViewedMyRequests = Date.now(); saveLastViewed(app_state.currentUser.id, Date.now()); updateMyRequestsBadge(); }
+      els.contentBody.innerHTML = '';
+      const titles = { tasks: { t: 'Мои задачи', d: 'Запросы, требующие вашего согласования' }, myRequests: { t: 'Мои запросы', d: 'Запросы, инициированные вами' }, history: { t: 'История процессов', d: 'Журнал действий по всем запросам в системе' }, projects: { t: 'Проекты и команда', d: 'Управление проектами и сотрудниками' }, admin: { t: 'Админ-панель', d: 'Управление всеми процессами (Бэкдор)' } };
+      els.pageTitle.textContent = titles[viewName].t; els.pageDesc.textContent = titles[viewName].d;
+      if (viewName === 'tasks') { const uid = app_state.currentUser.id; renderRequestList(requests_data.filter(r => r.status === 'pending' && r.approvers.includes(uid) && !(r.approvalType === 'any' && Object.values(r.approvals).includes(true)) && !r.approvals[uid]), 'approve'); }
+      else if (viewName === 'myRequests') { renderRequestList(requests_data.filter(r => r.creator === app_state.currentUser.id), 'view'); }
+      else if (viewName === 'history') { renderHistory(); }
+      else if (viewName === 'projects') { renderProjects(); }
+      else if (viewName === 'admin') { renderAdminView(); }
+      updateTaskBadge();
+    }
+
+    // === ADMIN VIEW ===
+    function renderAdminView() {
+      const content = els.contentBody;
+      content.innerHTML = '';
+      
+      const subNav = document.createElement('div');
+      subNav.className = 'admin-sub-nav';
+      subNav.innerHTML = `
+        <button class="admin-sub-btn ${app_state.adminSubView === 'requests' ? 'active' : ''}" onclick="switchAdminSubView('requests')">
+          <svg class="w-4 h-4 inline mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          Управление запросами
+        </button>
+        <button class="admin-sub-btn ${app_state.adminSubView === 'constructor' ? 'active' : ''}" onclick="switchAdminSubView('constructor')">
+          <svg class="w-4 h-4 inline mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+          Конструктор запросов
+        </button>
+      `;
+      content.appendChild(subNav);
+
+      const adminContentDiv = document.createElement('div');
+      adminContentDiv.id = 'admin-content-area';
+      content.appendChild(adminContentDiv);
+
+      if (app_state.adminSubView === 'requests') {
+        renderRequestListForAdmin(requests_data, 'admin', adminContentDiv);
+      } else if (app_state.adminSubView === 'constructor') {
+        renderRequestTypeConstructor(adminContentDiv);
+      }
+    }
+
+    window.switchAdminSubView = function(subView) {
+      app_state.adminSubView = subView;
+      renderAdminView();
+    };
+
+    function renderRequestListForAdmin(list, context, container) {
+      container.innerHTML = '';
+      if (list.length === 0) { container.innerHTML = `<div class="text-center py-16 bg-white rounded-2xl border border-dashed border-slate-200"><div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4"><svg class="w-8 h-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></div><p class="text-slate-500">Запросов не найдено</p></div>`; return; }
+      list.forEach(req => {
+        const card = document.createElement('div'); card.className = 'req-card fade-in';
+        let statusHtml = req.status === 'pending' ? '<span class="badge status-pending">На согласовании</span>' : req.status === 'approved' ? '<span class="badge status-approved">Согласовано</span>' : '<span class="badge status-rejected">Отклонено</span>';
+        let progressHtml = '';
+        if (req.status === 'pending') { const ac = Object.values(req.approvals).filter(Boolean).length; const nd = req.approvalType === 'any' ? 1 : req.approvers.length; progressHtml = `<div class="mt-4 flex items-center gap-3"><div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-blue-500 rounded-full" style="width: ${(ac/nd)*100}%"></div></div><span class="text-xs font-medium text-slate-600">${ac}/${nd}</span><span class="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">${req.approvalType==='any'?'Достаточно 1':'Нужны все'}</span></div>`; }
+        let rejectionHtml = ''; if (req.status === 'rejected') { const rej = req.history.find(h => h.action==='rejected'||h.action==='force_rejected'); if(rej) rejectionHtml = `<div class="mt-4 p-3 bg-red-50 border border-red-100 rounded-xl text-sm text-red-700 flex items-start gap-2"><span class="font-bold">Причина:</span> ${rej.note}</div>`; }
+        let actionsHtml = '';
+        if (context === 'approve') { actionsHtml = `<div class="mt-5 flex gap-3 pt-4 border-t border-slate-100"><button onclick="handleApprove('${req.id}')" class="flex-1 px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-xl transition-all shadow-sm">Согласовать</button><button onclick="openRejectModal('${req.id}')" class="px-4 py-2.5 bg-white border border-slate-200 hover:bg-red-50 hover:border-red-200 hover:text-red-600 text-slate-600 text-sm font-medium rounded-xl transition-all">Отклонить</button></div>`; }
+        else if (context === 'view' && req.status === 'rejected' && req.creator === app_state.currentUser.id) { actionsHtml = `<div class="mt-5 pt-4 border-t border-slate-100"><button onclick="openResubmitModal('${req.id}')" class="w-full px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl transition-all shadow-md flex items-center justify-center gap-2"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>Исправить и отправить повторно</button></div>`; }
+        else if (context === 'admin') { actionsHtml = `<div class="mt-4 pt-3 border-t border-slate-200 bg-slate-50 -mx-5 -mb-5 p-4 rounded-b-xl flex justify-between items-center"><span class="text-xs text-slate-500 font-mono">Админ доступ</span><div class="flex gap-2"><button onclick="adminForceAction('${req.id}', 'approve')" class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-bold rounded-lg transition-colors">Force Approve</button><button onclick="adminForceAction('${req.id}', 'reject')" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg transition-colors">Force Reject</button></div></div>`; }
+        let subtypeBadge = ''; if (req.type === 'support' && req.details.subtype) { subtypeBadge = `<span class="text-xs text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md border border-indigo-100 font-medium">${req.details.subtype === 'action' ? 'Запрос на действие' : 'Предложение'}</span>`; }
+        let projectBadge = ''; if (req.details.project) { projectBadge = `<span class="text-xs text-purple-600 bg-purple-50 px-2 py-1 rounded-md border border-purple-100 font-medium">📁 ${req.details.project}</span>`; }
+        card.innerHTML = `<div class="flex justify-between items-start mb-3"><div><div class="flex items-center gap-2 mb-1 flex-wrap"><h3 class="font-bold text-slate-800 text-lg leading-tight">${req.title}</h3>${subtypeBadge}${projectBadge}</div><p class="text-sm text-slate-500 mt-1.5">${req.description}</p></div><div class="flex-shrink-0 ml-4">${statusHtml}</div></div><div class="flex items-center gap-4 mt-3 text-xs text-slate-400 flex-wrap"><span class="bg-slate-100 px-2 py-1 rounded-md">ID: ${req.id.split('_')[1]}</span><span>Инициатор: ${req.creator}</span><span>Тип: ${req.approvalType==='any'?'Один из':'Все'}</span></div>${progressHtml}${rejectionHtml}${actionsHtml}`;
+        container.appendChild(card);
+      });
+    }
+
+    // === REQUEST TYPE CONSTRUCTOR ===
+    function renderRequestTypeConstructor(container) {
+      container.innerHTML = '';
+      
+      const headerDiv = document.createElement('div');
+      headerDiv.className = 'flex items-center justify-between mb-4 mt-4';
+      headerDiv.innerHTML = `
+        <div class="flex items-center gap-2">
+          <svg class="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+          <span class="text-sm font-medium text-slate-500">Настроенных типов: ${request_types_data.length}</span>
+        </div>
+        <button onclick="openCreateRequestTypeModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-xl flex items-center gap-2 shadow-md transition-all transform hover:-translate-y-0.5 active:scale-95">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          Создать тип
+        </button>
+      `;
+      container.appendChild(headerDiv);
+
+      if (request_types_data.length === 0) {
+        const emptyDiv = document.createElement('div');
+        emptyDiv.className = 'text-center py-16 bg-white rounded-2xl border border-dashed border-slate-200 fade-in';
+        emptyDiv.innerHTML = `
+          <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+          </div>
+          <p class="text-slate-500 font-medium">Нет настроенных типов запросов</p>
+          <p class="text-slate-400 text-sm mt-1">Создайте свой первый тип запроса с нужными полями</p>
+        `;
+        container.appendChild(emptyDiv);
+        return;
+      }
+
+      request_types_data.forEach((rt, index) => {
+        const card = document.createElement('div');
+        card.className = 'request-type-card fade-in';
+        card.style.animationDelay = `${index * 0.05}s`;
+
+        const badgeForOption = (option) => {
+          if (option === 'required') return '<span class="request-type-badge-required">Обязательное</span>';
+          if (option === 'optional') return '<span class="request-type-badge-optional">Необязательное</span>';
+          return '<span class="request-type-badge-hidden">Отключено</span>';
+        };
+
+        const statusLabel = rt.isActive ? '<span class="badge status-approved">Активен</span>' : '<span class="badge status-rejected">Неактивен</span>';
+
+        let customFieldsHtml = '';
+        if (rt.customFields && rt.customFields.length > 0) {
+          customFieldsHtml = `<div class="mt-3 pt-3 border-t border-slate-100"><div class="text-xs text-slate-500 mb-2 font-medium">Дополнительные поля:</div><div class="flex flex-wrap gap-2">`;
+          rt.customFields.forEach(cf => {
+            customFieldsHtml += `<span class="text-xs px-2 py-1 rounded-md border ${cf.type === 'date' ? 'bg-purple-50 text-purple-600 border-purple-100' : 'bg-amber-50 text-amber-600 border-amber-100'}">${cf.name} (${cf.type === 'date' ? 'дата' : 'текст'})</span>`;
+          });
+          customFieldsHtml += '</div></div>';
+        }
+
+        card.innerHTML = `
+          <div class="flex items-start justify-between gap-4 mb-4">
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow-md flex-shrink-0">${rt.name.charAt(0)}</div>
+              <div>
+                <h3 class="font-bold text-slate-800 text-lg">${rt.name}</h3>
+                <div class="flex items-center gap-2 mt-1">${statusLabel}${rt.project !== 'disabled' ? '<span class="text-xs text-purple-600 bg-purple-50 px-2 py-1 rounded-md border border-purple-100">📁 Проект</span>' : ''}</div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+              <button onclick="toggleRequestTypeActive('${rt.id}')" class="text-xs font-medium ${rt.isActive ? 'text-amber-600 hover:text-amber-800' : 'text-green-600 hover:text-green-800'} transition-colors flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${rt.isActive ? 'M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636' : 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z'}"/></svg>
+                ${rt.isActive ? 'Деактивировать' : 'Активировать'}
+              </button>
+              <button onclick="editRequestType('${rt.id}')" class="text-xs font-medium text-blue-600 hover:text-blue-800 transition-colors flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                Изменить
+              </button>
+              <button onclick="deleteRequestType('${rt.id}')" class="text-xs font-medium text-red-500 hover:text-red-700 transition-colors flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                Удалить
+              </button>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-3 pt-3 border-t border-slate-100">
+            <div class="flex flex-col gap-1"><span class="text-xs text-slate-500">Заголовок</span>${badgeForOption(rt.fields.title)}</div>
+            <div class="flex flex-col gap-1"><span class="text-xs text-slate-500">Описание</span>${badgeForOption(rt.fields.description)}</div>
+            <div class="flex flex-col gap-1"><span class="text-xs text-slate-500">Проект</span>${badgeForOption(rt.fields.project)}</div>
+            <div class="flex flex-col gap-1"><span class="text-xs text-slate-500">Согласующие</span>${badgeForOption(rt.fields.approvers)}</div>
+            <div class="flex flex-col gap-1"><span class="text-xs text-slate-500">Тип согласования</span>${badgeForOption(rt.fields.approvalType)}</div>
+          </div>
+          ${customFieldsHtml}
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function openCreateRequestTypeModal() {
+      app_state.activeRequestTypeId = null;
+      document.getElementById('request-type-modal-title').textContent = 'Создать тип запроса';
+      document.getElementById('rt-name').value = '';
+      app_state.constructorOptions = { title: 'required', description: 'required', project: 'disabled', approvers: 'required', approvalType: 'required' };
+      app_state.customFieldsList = [];
+      updateConstructorToggles();
+      renderCustomFieldsList();
+      document.getElementById('modal-request-type').classList.remove('hidden');
+    }
+
+    function editRequestType(rtId) {
+      const rt = request_types_data.find(r => r.id === rtId);
+      if (!rt) return;
+      app_state.activeRequestTypeId = rtId;
+      document.getElementById('request-type-modal-title').textContent = 'Редактировать тип запроса';
+      document.getElementById('rt-name').value = rt.name;
+      app_state.constructorOptions = { ...rt.fields };
+      app_state.customFieldsList = (rt.customFields || []).map((cf, idx) => ({ ...cf, uid: cf.uid || 'cf_' + Date.now() + '_' + idx }));
+      updateConstructorToggles();
+      renderCustomFieldsList();
+      document.getElementById('modal-request-type').classList.remove('hidden');
+    }
+
+    window.toggleConstructorOption = function(option) {
+      const current = app_state.constructorOptions[option];
+      if (current === 'required') {
+        app_state.constructorOptions[option] = 'disabled';
+      } else if (current === 'disabled') {
+        app_state.constructorOptions[option] = 'optional';
+      } else {
+        app_state.constructorOptions[option] = 'required';
+      }
+      updateConstructorToggles();
+    };
+
+    function updateConstructorToggles() {
+      const options = app_state.constructorOptions;
+      Object.keys(options).forEach(key => {
+        const toggle = document.getElementById(`toggle-${key}`);
+        const label = document.getElementById(`toggle-${key}-label`);
+        if (!toggle || !label) return;
+        toggle.classList.toggle('active', options[key] !== 'disabled');
+        if (options[key] === 'required') { label.className = 'request-type-badge-required'; label.textContent = 'Обязательное'; }
+        else if (options[key] === 'optional') { label.className = 'request-type-badge-optional'; label.textContent = 'Необязательное'; }
+        else { label.className = 'request-type-badge-hidden'; label.textContent = 'Отключено'; }
+      });
+    }
+
+    // Custom fields management
+    window.addCustomField = function() {
+      const uid = 'cf_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
+      app_state.customFieldsList.push({ uid: uid, name: '', type: 'text' });
+      renderCustomFieldsList();
+    };
+
+    window.removeCustomField = function(uid) {
+      app_state.customFieldsList = app_state.customFieldsList.filter(cf => cf.uid !== uid);
+      renderCustomFieldsList();
+    };
+
+    window.updateCustomFieldName = function(uid, value) {
+      const cf = app_state.customFieldsList.find(f => f.uid === uid);
+      if (cf) cf.name = value;
+    };
+
+    window.updateCustomFieldType = function(uid, value) {
+      const cf = app_state.customFieldsList.find(f => f.uid === uid);
+      if (cf) cf.type = value;
+    };
+
+    function renderCustomFieldsList() {
+      const container = document.getElementById('custom-fields-list');
+      const noFields = document.getElementById('no-custom-fields');
+      container.innerHTML = '';
+
+      if (app_state.customFieldsList.length === 0) {
+        noFields.classList.remove('hidden');
+        return;
+      }
+      noFields.classList.add('hidden');
+
+      app_state.customFieldsList.forEach((cf, index) => {
+        const row = document.createElement('div');
+        row.className = 'custom-field-row fade-in';
+        row.innerHTML = `
+          <svg class="w-4 h-4 text-slate-400 flex-shrink-0 cursor-grab" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"/></svg>
+          <input type="text" value="${cf.name}" oninput="updateCustomFieldName('${cf.uid}', this.value)" class="flex-1 border border-slate-300 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Название поля...">
+          <select onchange="updateCustomFieldType('${cf.uid}', this.value)" class="border border-slate-300 rounded-lg px-2 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <option value="text" ${cf.type === 'text' ? 'selected' : ''}>Текст</option>
+            <option value="date" ${cf.type === 'date' ? 'selected' : ''}>Дата</option>
+          </select>
+          <button onclick="removeCustomField('${cf.uid}')" class="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0" title="Удалить поле">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function handleRequestTypeConfirm() {
+      const name = document.getElementById('rt-name').value.trim();
+      if (!name) { showToast('Введите название типа запроса', true); return; }
+      const duplicate = request_types_data.find(rt => rt.name.toLowerCase() === name.toLowerCase() && rt.id !== app_state.activeRequestTypeId);
+      if (duplicate) { showToast('Тип запроса с таким именем уже существует', true); return; }
+
+      // Validate custom fields
+      const validFields = app_state.customFieldsList.filter(cf => cf.name.trim() !== '');
+      for (let i = 0; i < validFields.length; i++) {
+        for (let j = i + 1; j < validFields.length; j++) {
+          if (validFields[i].name.toLowerCase() === validFields[j].name.toLowerCase()) {
+            showToast('Названия дополнительных полей должны быть уникальны', true);
+            return;
+          }
+        }
+      }
+
+      const fields = { ...app_state.constructorOptions };
+      const customFields = validFields.map(cf => ({ name: cf.name.trim(), type: cf.type }));
+
+      if (app_state.activeRequestTypeId) {
+        const rt = request_types_data.find(r => r.id === app_state.activeRequestTypeId);
+        if (rt) { rt.name = name; rt.fields = fields; rt.customFields = customFields; showToast('Тип запроса обновлён'); }
+      } else {
+        const newId = 'rt_' + Date.now().toString(36);
+        request_types_data.push({ id: newId, name: name, fields: fields, customFields: customFields, isActive: true, createdAt: Date.now() });
+        showToast(`Тип запроса "${name}" создан`);
+      }
+      document.getElementById('modal-request-type').classList.add('hidden');
+      renderAdminView();
+    }
+
+    window.toggleRequestTypeActive = function(rtId) {
+      const rt = request_types_data.find(r => r.id === rtId);
+      if (rt) { rt.isActive = !rt.isActive; showToast(`Тип "${rt.name}" ${rt.isActive ? 'активирован' : 'деактивирован'}`); renderAdminView(); }
+    };
+
+    window.deleteRequestType = function(rtId) {
+      const rt = request_types_data.find(r => r.id === rtId);
+      if (!rt) return;
+      if (!confirm(`Удалить тип запроса "${rt.name}"?`)) return;
+      request_types_data = request_types_data.filter(r => r.id !== rtId);
+      showToast(`Тип "${rt.name}" удалён`);
+      renderAdminView();
+    };
+
+    // === REQUEST LIST ===
+    function renderRequestList(list, context) {
+      els.contentBody.innerHTML = '';
+      if (list.length === 0) { els.contentBody.innerHTML = `<div class="text-center py-16 bg-white rounded-2xl border border-dashed border-slate-200"><div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4"><svg class="w-8 h-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></div><p class="text-slate-500">Запросов не найдено</p></div>`; return; }
+      list.forEach(req => {
+        const card = document.createElement('div'); card.className = 'req-card fade-in';
+        let statusHtml = req.status === 'pending' ? '<span class="badge status-pending">На согласовании</span>' : req.status === 'approved' ? '<span class="badge status-approved">Согласовано</span>' : '<span class="badge status-rejected">Отклонено</span>';
+        let progressHtml = '';
+        if (req.status === 'pending') { const ac = Object.values(req.approvals).filter(Boolean).length; const nd = req.approvalType === 'any' ? 1 : req.approvers.length; progressHtml = `<div class="mt-4 flex items-center gap-3"><div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-blue-500 rounded-full" style="width: ${(ac/nd)*100}%"></div></div><span class="text-xs font-medium text-slate-600">${ac}/${nd}</span><span class="text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">${req.approvalType==='any'?'Достаточно 1':'Нужны все'}</span></div>`; }
+        let rejectionHtml = ''; if (req.status === 'rejected') { const rej = req.history.find(h => h.action==='rejected'||h.action==='force_rejected'); if(rej) rejectionHtml = `<div class="mt-4 p-3 bg-red-50 border border-red-100 rounded-xl text-sm text-red-700 flex items-start gap-2"><span class="font-bold">Причина:</span> ${rej.note}</div>`; }
+        let actionsHtml = '';
+        if (context === 'approve') { actionsHtml = `<div class="mt-5 flex gap-3 pt-4 border-t border-slate-100"><button onclick="handleApprove('${req.id}')" class="flex-1 px-4 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-xl transition-all shadow-sm">Согласовать</button><button onclick="openRejectModal('${req.id}')" class="px-4 py-2.5 bg-white border border-slate-200 hover:bg-red-50 hover:border-red-200 hover:text-red-600 text-slate-600 text-sm font-medium rounded-xl transition-all">Отклонить</button></div>`; }
+        else if (context === 'view' && req.status === 'rejected' && req.creator === app_state.currentUser.id) { actionsHtml = `<div class="mt-5 pt-4 border-t border-slate-100"><button onclick="openResubmitModal('${req.id}')" class="w-full px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl transition-all shadow-md flex items-center justify-center gap-2"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>Исправить и отправить повторно</button></div>`; }
+        else if (context === 'admin') { actionsHtml = `<div class="mt-4 pt-3 border-t border-slate-200 bg-slate-50 -mx-5 -mb-5 p-4 rounded-b-xl flex justify-between items-center"><span class="text-xs text-slate-500 font-mono">Админ доступ</span><div class="flex gap-2"><button onclick="adminForceAction('${req.id}', 'approve')" class="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-bold rounded-lg transition-colors">Force Approve</button><button onclick="adminForceAction('${req.id}', 'reject')" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg transition-colors">Force Reject</button></div></div>`; }
+        let subtypeBadge = ''; if (req.type === 'support' && req.details.subtype) { subtypeBadge = `<span class="text-xs text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md border border-indigo-100 font-medium">${req.details.subtype === 'action' ? 'Запрос на действие' : 'Предложение'}</span>`; }
+        let projectBadge = ''; if (req.details.project) { projectBadge = `<span class="text-xs text-purple-600 bg-purple-50 px-2 py-1 rounded-md border border-purple-100 font-medium">📁 ${req.details.project}</span>`; }
+        card.innerHTML = `<div class="flex justify-between items-start mb-3"><div><div class="flex items-center gap-2 mb-1 flex-wrap"><h3 class="font-bold text-slate-800 text-lg leading-tight">${req.title}</h3>${subtypeBadge}${projectBadge}</div><p class="text-sm text-slate-500 mt-1.5">${req.description}</p></div><div class="flex-shrink-0 ml-4">${statusHtml}</div></div><div class="flex items-center gap-4 mt-3 text-xs text-slate-400 flex-wrap"><span class="bg-slate-100 px-2 py-1 rounded-md">ID: ${req.id.split('_')[1]}</span><span>Инициатор: ${req.creator}</span><span>Тип: ${req.approvalType==='any'?'Один из':'Все'}</span></div>${progressHtml}${rejectionHtml}${actionsHtml}`;
+        els.contentBody.appendChild(card);
+      });
+    }
+
+    // === PROJECTS ===
+    function renderProjects() {
+      const currentUser = app_state.currentUser;
+      const isAdmin = currentUser.isAdmin;
+      const manageableProjects = projects_data.filter(p => isAdmin || p.managerIds.includes(currentUser.id));
+      let headerHtml = '';
+      if (isAdmin) {
+        headerHtml = `<div class="flex items-center justify-between mb-4"><div class="flex items-center gap-2"><svg class="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg><span class="text-sm font-medium text-slate-500">Всего проектов: ${projects_data.length}</span></div><button onclick="openCreateProjectModal()" class="project-badge-create"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>Создать проект</button></div>`;
+      }
+      els.contentBody.innerHTML = headerHtml;
+      if (manageableProjects.length === 0) {
+        els.contentBody.innerHTML += `<div class="text-center py-16 bg-white rounded-2xl border border-dashed border-slate-200"><div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4"><svg class="w-8 h-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg></div><p class="text-slate-500">Нет проектов</p></div>`;
+        return;
+      }
+      manageableProjects.forEach(proj => {
+        const card = document.createElement('div'); card.className = 'project-card fade-in';
+        const managerUsers = proj.managerIds.map(id => mock_users.find(u => u.id === id)).filter(Boolean);
+        const employeeCount = proj.employeeIds.length;
+        const canManage = isAdmin || proj.managerIds.includes(currentUser.id);
+        let managersHtml = ''; managerUsers.forEach(mu => { managersHtml += `<span class="project-manager-badge">👤 ${mu.name}</span>`; });
+        let employeesHtml = ''; proj.employeeIds.forEach(empId => { const empUser = mock_users.find(u => u.id === empId); if (empUser) { employeesHtml += `<span class="project-member-badge">${empUser.avatar} ${empUser.name.split(' ')[0]}</span>`; } });
+        let actionsHtml = '';
+        if (canManage) { actionsHtml = `<button onclick="openManageProjectModal('${proj.id}')" class="text-xs font-medium text-indigo-600 hover:text-indigo-800 transition-colors flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>Управление</button>`; }
+        let deleteHtml = '';
+        if (isAdmin) { deleteHtml = `<button onclick="deleteProject('${proj.id}')" class="text-xs font-medium text-red-500 hover:text-red-700 transition-colors flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>Удалить</button>`; }
+        card.innerHTML = `<div class="flex items-start justify-between gap-4"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shadow-md">${proj.name.charAt(0)}</div><div><h3 class="font-bold text-slate-800 text-lg">${proj.name}</h3><div class="flex items-center gap-2 mt-1 flex-wrap">${managersHtml}<span class="project-member-badge">👥 ${employeeCount} сотр.</span></div></div></div><div class="flex items-center gap-3 flex-shrink-0">${actionsHtml}${deleteHtml}</div></div><div class="flex flex-wrap items-center gap-2 mt-4 pt-3 border-t border-slate-100"><span class="text-xs text-slate-400">Сотрудники:</span>${employeesHtml || '<span class="text-xs text-slate-400 italic">Нет сотрудников</span>'}</div>`;
+        els.contentBody.appendChild(card);
+      });
+    }
+
+    function renderManagerCheckboxes(containerId, selectedIds) {
+      const container = document.getElementById(containerId); container.innerHTML = '';
+      const potentialManagers = mock_users.filter(u => !u.isAdmin && (u.roleType === 'pm' || u.roleType === 'manager'));
+      if (potentialManagers.length === 0) { container.innerHTML = '<p class="text-xs text-slate-400 p-2">Нет доступных руководителей</p>'; return; }
+      potentialManagers.forEach(u => {
+        const isChecked = selectedIds.includes(u.id);
+        const label = document.createElement('label'); label.className = 'checkbox-label flex items-center gap-3 p-2 border rounded-md cursor-pointer hover:bg-slate-50';
+        label.innerHTML = `<input type="checkbox" value="${u.id}" class="w-4 h-4 text-blue-600 rounded border-slate-300" ${isChecked ? 'checked' : ''}><span class="text-sm text-slate-700">${u.name} <span class="text-xs text-slate-400">(${u.role})</span></span>`;
+        container.appendChild(label);
+      });
+    }
+
+    function renderEmployeeCheckboxes(containerId, selectedIds, excludeIds) {
+      const container = document.getElementById(containerId); container.innerHTML = '';
+      const excludeSet = new Set(excludeIds || []);
+      const availableEmployees = mock_users.filter(u => !u.isAdmin && !excludeSet.has(u.id));
+      if (availableEmployees.length === 0) { container.innerHTML = '<p class="text-xs text-slate-400 p-2">Нет доступных сотрудников</p>'; return; }
+      availableEmployees.forEach(u => {
+        const isChecked = selectedIds.includes(u.id);
+        const label = document.createElement('label'); label.className = 'checkbox-label flex items-center gap-3 p-2 border rounded-md cursor-pointer hover:bg-slate-50';
+        label.innerHTML = `<input type="checkbox" value="${u.id}" class="w-4 h-4 text-blue-600 rounded border-slate-300" ${isChecked ? 'checked' : ''}><span class="text-sm text-slate-700">${u.name} <span class="text-xs text-slate-400">(${u.role})</span></span>`;
+        container.appendChild(label);
+      });
+    }
+
+    function getCheckedIds(containerId) { return Array.from(document.querySelectorAll(`#${containerId} input:checked`)).map(cb => cb.value); }
+
+    function openCreateProjectModal() {
+      document.getElementById('create-project-name').value = '';
+      renderManagerCheckboxes('create-project-managers', []);
+      renderEmployeeCheckboxes('create-project-employees', [], []);
+      document.getElementById('modal-create-project').classList.remove('hidden');
+    }
+
+    function handleCreateProjectConfirm() {
+      const name = document.getElementById('create-project-name').value.trim();
+      const managerIds = getCheckedIds('create-project-managers');
+      const employeeIds = getCheckedIds('create-project-employees');
+      if (!name) { showToast('Введите название проекта', true); return; }
+      if (managerIds.length === 0) { showToast('Выберите хотя бы одного руководителя', true); return; }
+      const filteredEmployeeIds = employeeIds.filter(id => !managerIds.includes(id));
+      const newId = 'proj_' + String(projects_data.length + 1).padStart(3, '0') + '_' + Date.now();
+      projects_data.push({ id: newId, name: name, managerIds: managerIds, employeeIds: filteredEmployeeIds, createdBy: app_state.currentUser.id });
+      document.getElementById('modal-create-project').classList.add('hidden');
+      showToast(`Проект "${name}" создан`);
+      renderProjects();
+    }
+
+    function openManageProjectModal(projectId) {
+      const project = projects_data.find(p => p.id === projectId); if (!project) return;
+      app_state.activeProjectId = projectId;
+      const isAdmin = app_state.currentUser.isAdmin;
+      document.getElementById('manage-project-title').textContent = `Управление: ${project.name}`;
+      if (isAdmin) {
+        document.getElementById('manage-project-managers-section').classList.remove('hidden');
+        renderManagerCheckboxes('manage-project-managers', project.managerIds);
+      } else { document.getElementById('manage-project-managers-section').classList.add('hidden'); }
+      renderEmployeeCheckboxes('manage-project-employees', project.employeeIds, project.managerIds);
+      document.getElementById('modal-manage-project').classList.remove('hidden');
+    }
+
+    function saveProjectEmployees() { const project = projects_data.find(p => p.id === app_state.activeProjectId); if (!project) return; const newEmployeeIds = getCheckedIds('manage-project-employees'); project.employeeIds = newEmployeeIds.filter(id => !project.managerIds.includes(id)); }
+    function saveProjectManagers() {
+      const project = projects_data.find(p => p.id === app_state.activeProjectId); if (!project) return;
+      const newManagerIds = getCheckedIds('manage-project-managers');
+      if (newManagerIds.length === 0) { showToast('Должен быть хотя бы один руководитель', true); return false; }
+      const oldManagerIds = project.managerIds; project.managerIds = newManagerIds;
+      oldManagerIds.forEach(oldId => { if (!newManagerIds.includes(oldId) && !project.employeeIds.includes(oldId)) { project.employeeIds.push(oldId); } });
+      project.employeeIds = project.employeeIds.filter(id => !newManagerIds.includes(id));
+      return true;
+    }
+
+    window.deleteProject = function(projectId) {
+      const project = projects_data.find(p => p.id === projectId); if (!project) return;
+      if (!confirm(`Удалить проект "${project.name}"?`)) return;
+      projects_data = projects_data.filter(p => p.id !== projectId);
+      showToast(`Проект "${project.name}" удалён`); renderProjects();
+    };
+
+    // === HISTORY ===
+    const typeNames = { leave: 'Отпуск', budget_change: 'Бюджет', support: 'Поддержка' };
+    const typeIcons = {
+      leave: `<svg class="w-4 h-4 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>`,
+      budget_change: `<svg class="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`,
+      support: `<svg class="w-4 h-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" /></svg>`
+    };
+
+    function renderHistory() {
+      let allHistory = [];
+      requests_data.forEach(req => { req.history.forEach(entry => { allHistory.push({ ...entry, reqTitle: req.title, reqId: req.id, reqStatus: req.status, reqType: req.type, creator: req.creator }); }); });
+      const typeFilter = app_state.historySort.typeFilter;
+      if (typeFilter !== 'all') allHistory = allHistory.filter(h => h.reqType === typeFilter);
+      const timeDir = app_state.historySort.timeDir;
+      allHistory.sort((a, b) => timeDir === 'desc' ? (b.timestamp || 0) - (a.timestamp || 0) : (a.timestamp || 0) - (b.timestamp || 0));
+      const activeFilterLabel = typeFilter === 'all' ? 'Все типы' : (typeNames[typeFilter] || typeFilter);
+      const activeFilterIcon = typeFilter === 'all' ? '' : (typeIcons[typeFilter] || '');
+      const sortHtml = `
+        <div class="flex flex-wrap items-center gap-3 mb-6 p-3 bg-white rounded-xl border border-slate-200 shadow-sm">
+          <div class="flex items-center gap-2"><span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Время:</span><button id="btn-time-sort" onclick="toggleTimeSort()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-medium transition-colors">${timeDir === 'desc' ? '<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"/></svg> Новее' : '<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h9m5-4v12m0 0l-4-4m4 4l4-4"/></svg> Старше'}</button></div>
+          <div class="w-px h-6 bg-slate-200"></div>
+          <div class="flex items-center gap-2"><span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Тип:</span><div id="type-dropdown-container" class="type-dropdown"><button id="btn-type-filter" onclick="toggleTypeDropdown()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-medium transition-colors">${activeFilterIcon}<span>${activeFilterLabel}</span><svg class="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg></button><div id="type-dropdown-menu" class="type-dropdown-menu hidden"><div class="type-option ${typeFilter === 'all' ? 'active' : ''}" onclick="setTypeFilter('all')"><svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>Все типы</div><div class="type-option ${typeFilter === 'leave' ? 'active' : ''}" onclick="setTypeFilter('leave')">${typeIcons.leave} Отпуск</div><div class="type-option ${typeFilter === 'budget_change' ? 'active' : ''}" onclick="setTypeFilter('budget_change')">${typeIcons.budget_change} Бюджет</div><div class="type-option ${typeFilter === 'support' ? 'active' : ''}" onclick="setTypeFilter('support')">${typeIcons.support} Поддержка</div></div></div></div>
+          ${typeFilter !== 'all' ? `<button onclick="setTypeFilter('all')" class="ml-auto text-xs text-blue-600 hover:text-blue-800 font-medium transition-colors">Сбросить</button>` : ''}
+        </div>
+      `;
+      if (allHistory.length === 0) { els.contentBody.innerHTML = sortHtml + `<div class="text-center py-10 text-slate-500 bg-white rounded-xl border border-dashed"><svg class="w-10 h-10 text-slate-300 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>${typeFilter !== 'all' ? 'Нет записей выбранного типа' : 'История пуста'}</div>`; return; }
+      els.contentBody.innerHTML = sortHtml;
+      allHistory.forEach(entry => {
+        const div = document.createElement('div');
+        let actionClass = 'created', actionText = 'Создание';
+        if (entry.action === 'approved' || entry.action === 'force_approved') { actionClass = 'approved'; actionText = 'Согласовано'; }
+        else if (entry.action === 'rejected' || entry.action === 'force_rejected') { actionClass = 'rejected'; actionText = 'Отклонено'; }
+        else if (entry.action === 'resubmitted') { actionClass = 'resubmitted'; actionText = 'Редактирование'; }
+        const initiatorUser = mock_users.find(u => u.id === entry.creator);
+        const initiatorName = initiatorUser ? initiatorUser.name : entry.creator;
+        const typeBadge = `<span class="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-md border ${entry.reqType === 'leave' ? 'bg-amber-50 border-amber-200 text-amber-700' : entry.reqType === 'budget_change' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-blue-50 border-blue-200 text-blue-700'}">${typeIcons[entry.reqType] || ''} ${typeNames[entry.reqType] || entry.reqType}</span>`;
+        div.className = `history-card fade-in ${actionClass}`;
+        div.innerHTML = `<div class="flex justify-between items-center mb-2"><span class="text-xs font-bold uppercase tracking-wider text-slate-400">${entry.reqTitle}</span><div class="flex items-center gap-2">${typeBadge}<span class="text-xs text-slate-500">${entry.time}</span></div></div><div class="flex items-center gap-2 mb-2"><span class="font-bold text-slate-700">${actionText}</span><span class="text-sm text-slate-600">пользователем <span class="font-medium text-slate-900 bg-white px-1 rounded border border-slate-100">${entry.user}</span></span></div><div class="mb-2"><span class="text-xs text-slate-500">Инициатор: <span class="font-medium text-slate-700">${initiatorName}</span></span></div>${entry.note ? `<div class="text-sm text-slate-500 bg-white bg-opacity-50 p-2 rounded border border-slate-100 mt-1 italic">"${entry.note}"</div>` : ''}`;
+        els.contentBody.appendChild(div);
+      });
+    }
+
+    window.toggleTimeSort = function() { app_state.historySort.timeDir = app_state.historySort.timeDir === 'desc' ? 'asc' : 'desc'; renderHistory(); };
+    window.toggleTypeDropdown = function() { const menu = document.getElementById('type-dropdown-menu'); menu.classList.toggle('hidden'); };
+    window.setTypeFilter = function(type) { app_state.historySort.typeFilter = type; renderHistory(); };
+
+    // === ACTIONS ===
+    window.handleApprove = function(reqId) { const req = requests_data.find(r => r.id === reqId); if (!req) return; const uid = app_state.currentUser.id; req.approvals[uid] = true; req.lastUpdated = Date.now(); checkRequestStatus(req); req.history.push({ action: 'approved', user: uid, time: getDateTimeString(), note: '', timestamp: getTimestamp() }); checkUnreadUpdate(req); showToast('Запрос согласован'); switchView(app_state.currentView); };
+    window.openRejectModal = function(reqId) { app_state.activeRequestId = reqId; els.rejectInput.value = ''; els.rejectModal.classList.remove('hidden'); };
+    window.handleRejectConfirm = function() { const reason = els.rejectInput.value.trim(); if (!reason) { showToast('Укажите причину отказа', true); return; } const req = requests_data.find(r => r.id === app_state.activeRequestId); if (!req) return; const uid = app_state.currentUser.id; req.approvals[uid] = false; req.status = 'rejected'; req.lastUpdated = Date.now(); req.history.push({ action: 'rejected', user: uid, time: getDateTimeString(), note: reason, timestamp: getTimestamp() }); checkUnreadUpdate(req); els.rejectModal.classList.add('hidden'); showToast('Запрос отклонен'); switchView(app_state.currentView); };
+    function checkUnreadUpdate(req) { if (req.creator === app_state.currentUser.id && app_state.currentView !== 'myRequests') updateMyRequestsBadge(); }
+    window.openResubmitModal = function(reqId) { app_state.activeRequestId = reqId; const req = requests_data.find(r => r.id === reqId); if (!req) return; let formHtml = ''; if (req.type === 'leave') formHtml = `<div class="grid grid-cols-2 gap-4"><div><label class="block text-sm font-medium text-slate-700 mb-1">Начало</label><input type="date" id="resub-start" value="${req.details.startDate}" class="w-full border border-slate-300 rounded-lg p-2 text-sm"></div><div><label class="block text-sm font-medium text-slate-700 mb-1">Конец</label><input type="date" id="resub-end" value="${req.details.endDate}" class="w-full border border-slate-300 rounded-lg p-2 text-sm"></div></div>`; else if (req.type === 'budget_change') formHtml = `<div class="grid grid-cols-2 gap-4"><div><label class="block text-sm font-medium text-slate-700 mb-1">Старая сумма</label><input type="text" value="${req.details.oldValue}" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-slate-50" disabled></div><div><label class="block text-sm font-medium text-slate-700 mb-1">Новая сумма</label><input type="number" id="resub-new" value="${req.details.newValue}" class="w-full border border-slate-300 rounded-lg p-2 text-sm"></div></div>`; else formHtml = `<div><label class="block text-sm font-medium text-slate-700 mb-1">Текст обращения</label><textarea id="resub-note" class="w-full border border-slate-300 rounded-lg p-2 text-sm" rows="3">${req.details.note || ''}</textarea></div><div><label class="block text-sm font-medium text-slate-700 mb-1">Тип обращения</label><select id="resub-subtype" class="w-full border border-slate-300 rounded-lg p-2 text-sm"><option value="suggestion" ${req.details.subtype==='suggestion'?'selected':''}>Предложение</option><option value="action" ${req.details.subtype==='action'?'selected':''}>Запрос на действие</option></select></div>`; els.resubmitContainer.innerHTML = formHtml; els.resubmitModal.classList.remove('hidden'); };
+    window.handleResubmitConfirm = function() { const req = requests_data.find(r => r.id === app_state.activeRequestId); if (!req) return; if (req.type === 'leave') { req.details.startDate = document.getElementById('resub-start').value; req.details.endDate = document.getElementById('resub-end').value; req.description = `Отпуск с ${req.details.startDate} по ${req.details.endDate}`; } else if (req.type === 'budget_change') { req.details.newValue = document.getElementById('resub-new').value; req.description = `Бюджет ${req.details.oldValue}₽ -> ${req.details.newValue}₽`; } else { req.details.note = document.getElementById('resub-note')?.value || ''; req.details.subtype = document.getElementById('resub-subtype')?.value || 'suggestion'; } req.status = 'pending'; req.approvals = {}; req.lastUpdated = Date.now(); req.history.push({ action: 'resubmitted', user: req.creator, time: getDateTimeString(), note: 'Исправлены данные', timestamp: getTimestamp() }); checkUnreadUpdate(req); els.resubmitModal.classList.add('hidden'); showToast('Запрос отправлен повторно'); switchView('myRequests'); };
+    window.adminForceAction = function(reqId, action) { const req = requests_data.find(r => r.id === reqId); if (!req) return; const note = 'Принудительно администратором'; if (action === 'approve') { req.status = 'approved'; req.lastUpdated = Date.now(); req.history.push({ action: 'force_approved', user: 'admin', time: getDateTimeString(), note, timestamp: getTimestamp() }); } else { req.status = 'rejected'; req.lastUpdated = Date.now(); req.history.push({ action: 'force_rejected', user: 'admin', time: getDateTimeString(), note, timestamp: getTimestamp() }); } checkUnreadUpdate(req); showToast(`Запрос принудительно ${action === 'approve' ? 'согласован' : 'отклонен'}`); switchView('admin'); };
+    function checkRequestStatus(req) { if (req.status === 'rejected') return; const approvals = req.approvers.map(id => req.approvals[id]); const hasReject = approvals.includes(false); const approvedCount = approvals.filter(a => a === true).length; if (req.approvalType === 'unanimous') { if (hasReject) req.status = 'rejected'; else if (approvedCount === req.approvers.length) req.status = 'approved'; } else if (req.approvalType === 'any') { if (approvedCount >= 1) req.status = 'approved'; } }
+    function showToast(msg, isError = false) { els.toastMsg.textContent = msg; els.toast.classList.remove('bg-slate-800', 'bg-red-600'); els.toast.classList.add(isError ? 'bg-red-600' : 'bg-slate-800'); els.toast.classList.add('show'); setTimeout(() => els.toast.classList.remove('show'), 3000); }
+
+    // === CREATE REQUEST ===
+    function getUserProjects(userId) { return projects_data.filter(p => p.employeeIds.includes(userId) || p.managerIds.includes(userId)); }
+    function getActiveCustomTypes() { return request_types_data.filter(rt => rt.isActive); }
+
+    function populateCreateTypeDropdown() {
+      const select = document.getElementById('create-type');
+      select.innerHTML = '';
+      const builtInGroup = document.createElement('optgroup'); builtInGroup.label = 'Стандартные типы';
+      [{ value: 'leave', label: 'Заявление на отпуск' }, { value: 'budget_change', label: 'Изменение бюджета' }, { value: 'support', label: 'Обращение в тех поддержку' }].forEach(opt => { const option = document.createElement('option'); option.value = opt.value; option.textContent = opt.label; builtInGroup.appendChild(option); });
+      select.appendChild(builtInGroup);
+      const customTypes = getActiveCustomTypes();
+      if (customTypes.length > 0) {
+        const customGroup = document.createElement('optgroup'); customGroup.label = 'Настраиваемые типы';
+        customTypes.forEach(rt => { const option = document.createElement('option'); option.value = 'custom_' + rt.id; option.textContent = rt.name; customGroup.appendChild(option); });
+        select.appendChild(customGroup);
+      }
+    }
+
+    function handleTypeChange() {
+      const type = document.getElementById('create-type').value;
+      const isCustom = type.startsWith('custom_');
+      const isLeave = type === 'leave';
+      const isSupport = type === 'support';
+      const isBudget = type === 'budget_change';
+
+      // Reset all containers
+      els.fieldTitleContainer.classList.add('hidden');
+      els.fieldDescContainer.classList.add('hidden');
+      els.approversSection.classList.add('hidden');
+      els.supportTypeContainer.classList.add('hidden');
+      els.approvalTypeSection.classList.add('hidden');
+      document.getElementById('custom-project-container').classList.add('hidden');
+      els.dynamicFields.innerHTML = '';
+      els.createApprovers.innerHTML = '';
+
+      if (isCustom) {
+        const rtId = type.replace('custom_', '');
+        const rt = request_types_data.find(r => r.id === rtId);
+        if (rt) {
+          const fields = rt.fields;
+          if (fields.title !== 'disabled') {
+            els.fieldTitleContainer.classList.remove('hidden');
+            const titleInput = document.getElementById('create-title');
+            titleInput.required = fields.title === 'required';
+            titleInput.placeholder = fields.title === 'required' ? 'Обязательное поле' : 'Необязательное поле';
+          }
+          if (fields.description !== 'disabled') {
+            els.fieldDescContainer.classList.remove('hidden');
+            const descInput = document.getElementById('create-desc');
+            descInput.required = fields.description === 'required';
+            descInput.placeholder = fields.description === 'required' ? 'Обязательное поле' : 'Необязательное поле';
+          }
+          // Project selector
+          if (fields.project !== 'disabled') {
+            renderProjectSelectorForCustom(fields.project === 'required');
+          }
+          // Custom fields
+          if (rt.customFields && rt.customFields.length > 0) {
+            renderCustomFieldsForRequest(rt.customFields);
+          }
+          // Approvers
+          if (fields.approvers !== 'disabled') {
+            els.approversSection.classList.remove('hidden');
+            renderCreateApprovers(fields.approvers === 'required');
+          }
+          // Approval type
+          if (fields.approvalType !== 'disabled') {
+            els.approvalTypeSection.classList.remove('hidden');
+          }
+        }
+      } else if (isLeave) {
+        renderDynamicFields();
+        els.createApprovers.innerHTML = '';
+      } else if (isSupport) {
+        els.dynamicFields.innerHTML = '';
+        els.createApprovers.innerHTML = '';
+        els.supportTypeContainer.classList.remove('hidden');
+      } else if (isBudget) {
+        renderBudgetFields();
+        renderCreateApprovers(true);
+      } else {
+        renderDynamicFields();
+        renderCreateApprovers(true);
+      }
+    }
+
+    function renderProjectSelectorForCustom(required) {
+      const container = document.getElementById('custom-project-container');
+      container.classList.remove('hidden');
+      const userProjects = getUserProjects(app_state.currentUser.id);
+      let html = `<div><label class="block text-sm font-medium text-slate-700 mb-1">Проект ${required ? '<span class="text-red-500">*</span>' : ''}</label>`;
+      if (userProjects.length > 1) {
+        html += `<select id="field-custom-project" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm bg-white" ${required ? 'required' : ''}><option value="">Выберите проект...</option>`;
+        userProjects.forEach(proj => { html += `<option value="${proj.name}">${proj.name}</option>`; });
+        html += `</select>`;
+      } else if (userProjects.length === 1) {
+        html += `<div class="w-full border border-slate-300 rounded-lg p-2.5 text-sm bg-slate-50 text-slate-500">${userProjects[0].name}</div><input type="hidden" id="field-custom-project" value="${userProjects[0].name}">`;
+      } else {
+        html += `<div class="p-3 bg-amber-50 text-amber-700 text-xs rounded-lg border border-amber-100">Вы не состоите ни в одном проекте. Обратитесь к администратору.</div>`;
+      }
+      html += '</div>';
+      container.innerHTML = html;
+    }
+
+    function renderCustomFieldsForRequest(customFields) {
+      let html = '<div class="space-y-3">';
+      customFields.forEach(cf => {
+        const isDate = cf.type === 'date';
+        html += `<div><label class="block text-sm font-medium text-slate-700 mb-1">${cf.name}</label>`;
+        if (isDate) {
+          html += `<input type="date" id="cf_${cf.uid}" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm">`;
+        } else {
+          html += `<input type="text" id="cf_${cf.uid}" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" placeholder="Введите значение...">`;
+        }
+        html += '</div>';
+      });
+      html += '</div>';
+      els.dynamicFields.innerHTML = html;
+    }
+
+    function renderBudgetFields() {
+      const currentUser = app_state.currentUser;
+      const userProjects = getUserProjects(currentUser.id);
+      let html = '';
+      if (userProjects.length > 1) {
+        html += `<div class="mb-4"><label class="block text-sm font-medium text-slate-700 mb-1">Проект <span class="text-red-500">*</span></label><select id="field-budget-project" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm bg-white"><option value="">Выберите проект...</option>`;
+        userProjects.forEach(proj => { html += `<option value="${proj.name}">${proj.name}</option>`; });
+        html += `</select></div>`;
+      } else if (userProjects.length === 1) {
+        html += `<div class="mb-4"><label class="block text-sm font-medium text-slate-700 mb-1">Проект</label><div class="w-full border border-slate-300 rounded-lg p-2.5 text-sm bg-slate-50 text-slate-500">${userProjects[0].name}</div><input type="hidden" id="field-budget-project" value="${userProjects[0].name}"></div>`;
+      } else {
+        html += `<div class="mb-4 p-3 bg-amber-50 text-amber-700 text-xs rounded-lg border border-amber-100">Вы не состоите ни в одном проекте. Обратитесь к администратору.</div>`;
+      }
+      html += `<div class="grid grid-cols-2 gap-4"><div><label class="block text-sm font-medium text-slate-700 mb-1">Старая сумма</label><input type="number" id="field-old" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm bg-slate-50" placeholder="100"></div><div><label class="block text-sm font-medium text-slate-700 mb-1">Новая сумма</label><input type="number" id="field-new" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm" placeholder="500"></div></div>`;
+      els.dynamicFields.innerHTML = html;
+    }
+
+    function renderDynamicFields() {
+      const type = document.getElementById('create-type').value;
+      let html = '';
+      if (type === 'leave') {
+        const now = new Date(); const minD = new Date(now); minD.setDate(now.getDate() + 10); const minS = minD.toISOString().split('T')[0]; const maxS = new Date(2026, 11, 31).toISOString().split('T')[0];
+        html = `<div class="p-3 bg-blue-50 text-blue-700 text-xs rounded-lg mb-2 border border-blue-100">Доступные даты: с ${minS} по ${maxS}. Отпуск можно оформить не ранее чем за 10 дней и только в текущем году.</div><div class="grid grid-cols-2 gap-4"><div><label class="block text-sm font-medium text-slate-700 mb-1">Начало</label><input type="date" id="field-start" min="${minS}" max="${maxS}" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm"></div><div><label class="block text-sm font-medium text-slate-700 mb-1">Конец</label><input type="date" id="field-end" min="${minS}" max="${maxS}" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm"></div></div>`;
+      }
+      els.dynamicFields.innerHTML = html;
+    }
+
+    function renderCreateApprovers(required) {
+      els.createApprovers.innerHTML = '';
+      const filtered = mock_users.filter(u => u.id !== app_state.currentUser.id);
+      if (filtered.length === 0) { els.createApprovers.innerHTML = '<p class="text-xs text-slate-400 p-2">Нет доступных согласующих</p>'; return; }
+      filtered.forEach(user => {
+        const l = document.createElement('label'); l.className = 'checkbox-label flex items-center gap-3 p-2 border rounded-md cursor-pointer hover:bg-slate-50';
+        l.innerHTML = `<input type="checkbox" value="${user.id}" class="w-4 h-4 text-blue-600 rounded border-slate-300"><span class="text-sm text-slate-700">${user.name} <span class="text-xs text-slate-400">(${user.role})</span></span>`;
+        els.createApprovers.appendChild(l);
+      });
+    }
+
+    function handleCreateConfirm() {
+      const type = document.getElementById('create-type').value;
+      const isCustom = type.startsWith('custom_');
+      const isLeave = type === 'leave';
+      const isBudget = type === 'budget_change';
+      let title, desc, approvers = [];
+      let selectedProject = '';
+
+      if (isCustom) {
+        const rtId = type.replace('custom_', '');
+        const rt = request_types_data.find(r => r.id === rtId);
+        if (!rt) { showToast('Тип запроса не найден', true); return; }
+        const fields = rt.fields;
+        title = rt.name;
+
+        if (fields.title !== 'disabled') {
+          const titleVal = document.getElementById('create-title').value.trim();
+          if (fields.title === 'required' && !titleVal) { showToast('Введите заголовок', true); return; }
+          title = titleVal || rt.name;
+        }
+        if (fields.description !== 'disabled') {
+          desc = document.getElementById('create-desc').value.trim();
+          if (fields.description === 'required' && !desc) { showToast('Введите описание', true); return; }
+        } else { desc = 'Запрос без описания'; }
+
+        // Project
+        if (fields.project !== 'disabled') {
+          const projectVal = document.getElementById('field-custom-project')?.value;
+          if (!projectVal) {
+            const userProjects = getUserProjects(app_state.currentUser.id);
+            if (fields.project === 'required' || userProjects.length > 1) { showToast('Выберите проект', true); return; }
+            if (userProjects.length === 1) selectedProject = userProjects[0].name;
+            else if (userProjects.length === 0 && fields.project === 'required') { showToast('Вы не состоите ни в одном проекте', true); return; }
+          } else {
+            selectedProject = projectVal;
+          }
+          if (selectedProject) desc = `${desc} (${selectedProject})`;
+        }
+
+        // Custom fields
+        let customFieldsData = {};
+        if (rt.customFields && rt.customFields.length > 0) {
+          rt.customFields.forEach(cf => {
+            const inputEl = document.getElementById('cf_' + cf.uid);
+            if (inputEl) customFieldsData[cf.name] = inputEl.value;
+          });
+        }
+
+        // Approvers
+        if (fields.approvers !== 'disabled') {
+          approvers = Array.from(document.querySelectorAll('#create-approvers input:checked')).map(cb => cb.value);
+          if (fields.approvers === 'required' && !approvers.length) { showToast('Выберите согласующих', true); return; }
+        }
+
+        // Approval type
+        let approvalType;
+        if (fields.approvalType !== 'disabled') { approvalType = app_state.approvalType; } else { approvalType = 'unanimous'; }
+
+        let details = { ...customFieldsData };
+        if (selectedProject) details.project = selectedProject;
+
+        requests_data.unshift({
+          id: 'req_'+(100+Math.floor(Math.random()*900)),
+          title, type, description: desc || 'Запрос без описания',
+          creator: app_state.currentUser.id,
+          approvers,
+          approvalType,
+          approvals: {},
+          status: 'pending',
+          history: [{ action: 'created', user: app_state.currentUser.id, time: getDateTimeString(), note: '', timestamp: getTimestamp() }],
+          details,
+          lastUpdated: Date.now()
+        });
+
+        els.createModal.classList.add('hidden'); showToast('Запрос создан!'); switchView('myRequests');
+        return;
+      }
+
+      // Built-in types
+      if (isLeave) {
+        const currentUser = mock_users.find(u => u.id === app_state.currentUser.id);
+        approvers = currentUser.leaveApprovers || [];
+        title = 'Заявление на отпуск';
+      } else if (type === 'support') {
+        approvers = mock_users.filter(u => u.isAdmin).map(u => u.id);
+        if (!approvers.length) { showToast('Нет администраторов', true); return; }
+        title = document.getElementById('create-title').value.trim();
+        if (!title) { showToast('Введите заголовок', true); return; }
+      } else {
+        approvers = Array.from(document.querySelectorAll('#create-approvers input:checked')).map(cb => cb.value);
+        if (!approvers.length) { showToast('Выберите согласующих', true); return; }
+        title = document.getElementById('create-title').value.trim();
+        if (!title) { showToast('Введите заголовок', true); return; }
+      }
+
+      if (isLeave) {
+        const s = document.getElementById('field-start')?.value; const e = document.getElementById('field-end')?.value;
+        if (!s || !e) { showToast('Укажите даты отпуска', true); return; }
+        const now = new Date(); const startD = new Date(s); const endD = new Date(e); const lim = new Date(now); lim.setDate(now.getDate() + 10);
+        if (startD <= lim || endD <= lim) { showToast('Нельзя оформить отпуск на ближайшие 10 дней', true); return; }
+        if (startD.getFullYear() > 2026 || endD.getFullYear() > 2026) { showToast('Нельзя оформить отпуск на следующий год', true); return; }
+        desc = `Заявление на отпуск с ${s} по ${e}`;
+      } else if (isBudget) {
+        selectedProject = document.getElementById('field-budget-project')?.value;
+        if (!selectedProject) {
+          const userProjects = getUserProjects(app_state.currentUser.id);
+          if (userProjects.length > 1) { showToast('Выберите проект', true); return; }
+          if (userProjects.length === 0) { showToast('Вы не состоите ни в одном проекте', true); return; }
+        }
+        const oldValue = document.getElementById('field-old')?.value;
+        const newValue = document.getElementById('field-new')?.value;
+        if (!oldValue || !newValue) { showToast('Укажите суммы', true); return; }
+        title = `Изменение бюджета ${selectedProject ? 'проекта ' + selectedProject : ''}`;
+        desc = `Бюджет ${oldValue}₽ -> ${newValue}₽`;
+      } else {
+        desc = document.getElementById('create-desc').value.trim() || 'Запрос без описания';
+      }
+
+      let details = {};
+      if (isLeave) { details = { startDate: document.getElementById('field-start').value, endDate: document.getElementById('field-end').value }; }
+      else if (isBudget) { details = { oldValue: document.getElementById('field-old')?.value||'0', newValue: document.getElementById('field-new')?.value||'0', project: selectedProject || getUserProjects(app_state.currentUser.id)[0]?.name || '' }; }
+      else { const st = document.querySelector('input[name="support-subtype"]:checked'); details = { note: desc, subtype: st ? st.value : 'suggestion' }; if(st && st.value==='suggestion') desc = `Предложение: ${desc}`; else if(st && st.value==='action') desc = `Запрос на действие: ${desc}`; }
+
+      let approvalType;
+      if (isLeave) approvalType = 'unanimous';
+      else if (type === 'support') approvalType = 'any';
+      else approvalType = app_state.approvalType;
+
+      requests_data.unshift({ id: 'req_'+(100+Math.floor(Math.random()*900)), title, type, description: desc, creator: app_state.currentUser.id, approvers, approvalType, approvals: {}, status: 'pending', history: [{ action: 'created', user: app_state.currentUser.id, time: getDateTimeString(), note: '', timestamp: getTimestamp() }], details, lastUpdated: Date.now() });
+      els.createModal.classList.add('hidden'); showToast('Запрос создан!'); switchView('myRequests');
+    }
+
+    init();
+  </script>
+</body>
+</html>
+
